@@ -1,0 +1,17 @@
+// CTRL + SHIFT + P -> Open keyboard shortcuts (JSON)
+// Paste this bindings
+// use F5 to run .kind files
+// use F6 to check .kind files
+
+[
+  {
+    "key": "f5",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Run Kind"
+  },
+  {
+    "key": "f6",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Check Kind"
+  }
+]
