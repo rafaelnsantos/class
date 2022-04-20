@@ -8,37 +8,26 @@ type Object {
 // Converts a text to an Object. If not possible, returns rock
 Object.read(code: String): Object
   case String.eql(code, "paper") String.eql(code, "scissors") {
-    false false: Object.rock
     false true: Object.scissors
     true false: Object.paper
-    true true: Object.rock
-  }
+  } default Object.rock
 
 // Converts a number to an Object. If not possible, returns rock
 // 2 = scissors | 1 = paper | X = rock
 Object.from_nat(n: Nat): Object
-  case Nat.gtn(n, 1) {
-    true: Object.scissors
-    false: case Nat.gtn(n, 0) {
-      true: Object.paper
-      false: Object.rock
-    }
-  }
+  case Nat.eql(n, 2) Nat.eql(n, 1) {
+    true false: Object.scissors
+    false true: Object.paper
+  } default Object.rock
 
 // Checks if Object a beats Object b
 // Draw = false
 Object.wins(a: Object, b: Object): Bool
   case a b {
-    rock rock: false
-    rock paper: false
     rock scissors: true
     paper rock: true
-    paper paper: false
-    paper scissors: false
-    scissors rock: false
     scissors paper: true
-    scissors scissors: false
-  }
+  } default false
 
 // If wins, return "Você ganhou" else "Você perdeu"
 Object.match_result(win: Bool): String
