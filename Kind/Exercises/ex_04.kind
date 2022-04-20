@@ -40,10 +40,14 @@ reverse<A: Type>(xs: List<A>): List<A>
   reverse.go<A>(List.nil<A>, xs)
 
 reverse.go<A: Type>(new_list: List<A>, old_list: List<A>): List<A>
-  ?r
+  case old_list {
+    nil: new_list
+    cons: reverse.go!(List.cons!(old_list.head, new_list), old_list.tail)
+  }
 
 ex_04: _
   // tail!([2, 3, 4])
   // length!([1, 2, 3, 5])
-  concat!([1, 2], [3, 4])
+  // concat!([1, 2], [3, 4])
   // map!!(Nat.succ, [])
+  reverse!([1, 2, 4])
