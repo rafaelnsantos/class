@@ -7,19 +7,33 @@ type List <A: Type> {
 
 // Returns the list without the first element
 tail<A: Type>(xs: List<A>): List<A>
-  ?a
+  case xs {
+    nil: []
+    cons: xs.tail
+  }
 
 // Returns the length of a list
 length<A: Type>(xs: List<A>): Nat
-  ?a
+  case xs {
+    nil: 0
+    cons: Nat.succ(length!(xs.tail))
+  }
 
 // Concatenates two lists
 concat<A: Type>(xs: List<A>, ys: List<A>): List<A>
-  ?a
+  case xs ys {
+    nil nil: []
+    nil cons: ys
+    cons nil: xs
+    cons cons: List.cons!(xs.head, concat!(xs.tail, ys))
+  }
 
 // Applies a function to all elements of a list
 map<A: Type, B: Type>(fn: A -> B, xs: List<A>): List<B>
-  ?a
+  case xs {
+    nil: []
+    cons: List.cons!(fn(xs.head), map!!(fn, xs.tail))
+  }
 
 // Returns the same list, with the order reversed
 reverse<A: Type>(xs: List<A>): List<A>
@@ -27,3 +41,9 @@ reverse<A: Type>(xs: List<A>): List<A>
 
 reverse.go<A: Type>(new_list: List<A>, old_list: List<A>): List<A>
   ?r
+
+ex_04: _
+  // tail!([2, 3, 4])
+  // length!([1, 2, 3, 5])
+  concat!([1, 2], [3, 4])
+  // map!!(Nat.succ, [])
