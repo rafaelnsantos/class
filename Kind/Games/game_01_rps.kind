@@ -7,43 +7,69 @@ type Object {
 
 // Converts a text to an Object. If not possible, returns rock
 Object.read(code: String): Object
-  ?a
+  case String.eql(code, "paper") String.eql(code, "scissors") {
+    false false: Object.rock
+    false true: Object.scissors
+    true false: Object.paper
+    true true: Object.rock
+  }
 
 // Converts a number to an Object. If not possible, returns rock
+// 2 = scissors | 1 = paper | X = rock
 Object.from_nat(n: Nat): Object
-  ?b
+  case Nat.gtn(n, 1) {
+    true: Object.scissors
+    false: case Nat.gtn(n, 0) {
+      true: Object.paper
+      false: Object.rock
+    }
+  }
 
 // Checks if Object a beats Object b
 // Draw = false
 Object.wins(a: Object, b: Object): Bool
-  ?c
+  case a b {
+    rock rock: false
+    rock paper: false
+    rock scissors: true
+    paper rock: true
+    paper paper: false
+    paper scissors: false
+    scissors rock: false
+    scissors paper: true
+    scissors scissors: false
+  }
 
 // If wins, return "Você ganhou" else "Você perdeu"
 Object.match_result(win: Bool): String
-  ?d
+  case win {
+    true: "Você ganhou"
+    false: "Você perdeu"
+  }
 
-Test: IO(Unit)
+game_01_rps: IO(Unit)
   IO {
     IO.print("Pick one: rock, paper or scissors")
     // Asks for user input and saves it in variable line
     get user_input = IO.get_line
 
     // Converts the user_input (String) to the Object type
-    let user_object = ?e
+    let user_object = Object.read(user_input)
 
     // Number = Random -> 0, 1, 2
     get random_num = IO.random(3)
 
     // Converts random_num (Nat) to the Object type
-    let cpu_object = ?f
+    let cpu_object = Object.from_nat(random_num)
 
     // Compares user_object and cpu_object and returns true if user wins
-    let user_won = ?g
+    let user_won = Object.wins(user_object, cpu_object)
 
     // Final message to be said: "You won" or "You lost"
-    let final_message = ?h
+    let final_message = Object.match_result(user_won)
 
+    // IO.print(Nat.show(random_num))
     IO.print(final_message)
 
-    Test
+    game_01_rps
   }
