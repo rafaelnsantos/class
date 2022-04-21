@@ -26,13 +26,30 @@ type TicTacToe {
 // The initial board state
 // An empty board
 TicTacToe.init: TicTacToe
-  ?a
+  TicTacToe.new(0, [
+    [none, none, none],
+    [none, none, none],
+    [none, none, none]
+  ])
 
 // Gets the state of a given position in the board
 // x = row
 // y = column
 TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
-  ?b
+  case game {
+    new: 
+      let row = List.get!(x, game.board)
+      case row {
+        none: none
+        some: 
+          let piece = List.get!(y, row.value)
+          case piece {
+            none: none
+            some: piece.value
+          } 
+      }
+  }
+  
 
 // If possible, converts the user input to a coordinate {x, y}
 // A valid inputs is any pair of 2 numbers separated with a space:
@@ -42,40 +59,165 @@ TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
 // "banana"
 // "   "
 TicTacToe.read(input: String): Maybe<Pair<Nat, Nat>>
-	?c
+  let strings = String.split(input, " ")
+  case Nat.eql(List.length!(strings), 2) {
+    false: none
+    true: 
+      let x = List.get!(0, strings)
+      let y = List.get!(1, strings)
+      case x y {
+        some some:
+          some(Pair.new!!(Nat.read(x.value), Nat.read(y.value)))
+      } default none
+  }
+	
 
 // Checks if a movement is valid
 // A valid movement is any movement inside the 3x3 board if the tile is unnocupied
 TicTacToe.is_move_valid(coord: Pair<Nat, Nat>, game: TicTacToe): Bool
-	?d
+  case coord {
+    new:   
+      case Nat.ltn(coord.fst, 3) Nat.ltn(coord.snd, 3) TicTacToe.get(coord.fst, coord.snd, game) {
+        true true none: true
+      } default false
+  }
+
 
 // Who is the next one to play?
 TicTacToe.next_piece(game: TicTacToe): TicTacToe.Piece
-  ?e
+  case game {
+    new: 
+      case Nat.is_even(game.turn) {
+        true: TicTacToe.Piece.X
+        false: TicTacToe.Piece.O
+      }
+  }
 
 
 // From an input, adds X or O (decided from TicTacToe.next_piece) at given location and increments the turn
 TicTacToe.move(coord: Pair<Nat, Nat>, game: TicTacToe): TicTacToe
-  ?f
-
+  case game coord {
+    new new: 
+      let piece = some(TicTacToe.next_piece(game))
+      let row = List.get!(coord.fst, game.board)
+      case row {
+        none: game
+        some: 
+          let newRow = List.set!(coord.snd, piece, row.value)
+          let newBoard = List.set!(coord.fst, newRow, game.board)
+          TicTacToe.new(Nat.succ(game.turn), newBoard)
+      }
+    } default game
+      
+      
 // Checks if 2 pieces are equal
 TicTacToe.Piece.eql(a: Maybe<TicTacToe.Piece>, b: Maybe<TicTacToe.Piece>): Bool
-	?g
+  case a b {
+    some some: case a.value b.value {
+      X X: true
+      O O: true
+    } default false
+  } default false
+    
 
 // Determines a winner if there is one
 TicTacToe.winner(game: TicTacToe): Maybe<TicTacToe.Piece>
-  ?h
+  case game {
+    new:
+      let result = Maybe.none<TicTacToe.Piece>
+
+      // check vertical lines
+      for row in game.board with result:
+        case result {
+          some: result
+        } default
+          let c0 = List.get!(0, row)
+          let c1 = List.get!(1, row)
+          let c2 = List.get!(2, row)
+          case c0 c1 c2 {
+            some some some:
+              case TicTacToe.Piece.eql(c0.value, c1.value) TicTacToe.Piece.eql(c0.value, c2.value) {
+                true true: c0.value
+              } default none
+          } default none
+
+      let r0 = List.get!(0, game.board)
+      let r1 = List.get!(1, game.board)
+      let r2 = List.get!(2, game.board)
+
+      // check horizontal lines
+      for i in [0, 1, 2] with result:
+        case result {
+          some: result
+        } default
+          case r0 r1 r2 {
+            some some some:
+              let p0 = List.get!(i, r0.value)
+              let p1 = List.get!(i, r1.value)
+              let p2 = List.get!(i, r2.value)
+              case p0 p1 p2 {
+                some some some:
+                  case TicTacToe.Piece.eql(p0.value, p1.value) TicTacToe.Piece.eql(p0.value, p2.value) {
+                    true true: p0.value
+                  } default none
+              } default none
+            } default none
+          
+      case result {
+        some: result
+        none:
+          // check top left to bottom right diagonal
+          case r0 r1 r2 {
+            some some some: 
+              let p0 = List.get!(0, r0.value)
+              let p1 = List.get!(1, r1.value)
+              let p2 = List.get!(2, r2.value)
+              case p0 p1 p2 {
+                some some some:
+                  case TicTacToe.Piece.eql(p0.value, p1.value) TicTacToe.Piece.eql(p0.value, p2.value) {
+                    true true: p0.value
+                  } default // check bottom left to top right diagonal
+                      case r0 r1 r2 {
+                        some some some: 
+                          let p0 = List.get!(0, r2.value)
+                          let p1 = List.get!(1, r1.value)
+                          let p2 = List.get!(2, r0.value)
+                          case p0 p1 p2 {
+                            some some some:
+                              case TicTacToe.Piece.eql(p0.value, p1.value) TicTacToe.Piece.eql(p0.value, p2.value) {
+                                true true: p0.value
+                              } default none
+                          } default none
+                      } default none
+              } default none
+          } default none
+      }
+  } default none
 
 // Converts the piece into a text to be shown
 TicTacToe.Piece.show(a: Maybe<TicTacToe.Piece>): String
-  ?i
+  case a {
+    none: " "
+    some: case a.value {
+      X: "X"
+      O: "O"
+    }
+  }
 
 // Shows the board
 TicTacToe.show(game: TicTacToe): String
-  ?j
+  case game {
+    new:
+      let result = ""
+      for row in game.board with result:
+        for piece in row with result:
+          result | TicTacToe.Piece.show(piece)
+        result | "\n"
+      result
+  }
+  
 
-
-Test: IO<Unit>
+game_02_ttt: IO<Unit>
   IO {
     // Prints the initial board
     let ttt = TicTacToe.init
