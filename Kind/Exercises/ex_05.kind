@@ -14,19 +14,41 @@ type Maybe <A: Type> {
 // Ex: zip!!([1,2], ["a","b","c"]) == [{1, "a"}, {2 , "b"}]
 // Ex: zip!!(["a", "b"], [3, 5])   == [{"a", 3}, {2 , "b"}]
 zip<A: Type, B: Type>(xs: List<A>, ys: List<B>): List<Pair<A,B>>
-  ?a
+  case xs ys {
+    cons cons: List.cons!({xs.head, ys.head}, zip!!(xs.tail, ys.tail))
+  } default []
 
 // Returns the smallest element of a List
 smallest(xs: List<Nat>): Nat
-  ?s
+  let f = (a: Nat, b: Nat) if Nat.ltn(a, b) then a else b
+  case xs {
+    nil: 0
+    cons: List.foldl!!(xs.head, f, xs.tail)
+  }
+
+neql(a: Nat, b: Nat): Bool // Given 2 numbers, it returns true if the 2 are different and false if they are equal.
+  case a b {
+    zero zero: false
+    succ succ: neql(a.pred, b.pred)
+  } default true
+  
 
 // Returns the same list without the smallest element
 delete_smallest(xs: List<Nat>): List<Nat>
-  ?d
+  case xs {
+    nil: []
+    cons: filter!((n) neql(n, smallest(xs)), xs)
+  }
 
 // Returns the same list, in ascending order
 sort_ascending(xs: List<Nat>): List<Nat>
-  ?a
+  case xs {
+    nil: []
+    cons:
+      let small = smallest(xs)
+      let list = filter!((n) neql(n, small), xs)
+      List.cons!(small, sort_ascending(list))
+  }
 
 // Returns an element at an index from the list
 // if there is an element at that index
@@ -34,10 +56,31 @@ sort_ascending(xs: List<Nat>): List<Nat>
 // else
 //   returns Maybe.none!
 get<A: Type>(idx: Nat, xs: List<A>): Maybe<A>
-  ?g
+  case xs {
+    nil: none
+    cons: 
+      case idx {
+        zero: some(xs.head)
+        succ: get!(idx.pred, xs.tail)
+    }
+  }
 
 // Removes all elements that does not match a condition
 // List.filter<Nat>(Nat.odd, [1, 2, 3, 4, 5]) = [1, 3, 5]
 filter<A: Type>(f: A -> Bool, xs: List<A>): List<A>
-  ?f
+  case xs {
+    nil: []
+    cons: 
+      case f(xs.head) {
+        false: filter!(f, xs.tail)
+        true: List.cons!(xs.head, filter!(f, xs.tail))
+      } 
+  }
   
+ex_05: _
+  // zip!!([1,2], ["a","b","c"])
+  // filter!((n) Nat.ltn(n, 2), [1, 2, 3, 0])
+  // delete_smallest([3, 4, 2, 5])
+  get!(2, [1, 2, 3, 0])
+  // smallest([1, 2, 3, 0])
+  // List.show!(Nat.show, sort_ascending([3, 2, 1, 4, 0]))
