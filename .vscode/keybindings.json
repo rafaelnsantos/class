@@ -5,6 +5,11 @@
 
 [
   {
+    "key": "f4",
+    "command": "workbench.action.tasks.runTask",
+    "args": "Run Kind and focus"
+  },
+  {
     "key": "f5",
     "command": "workbench.action.tasks.runTask",
     "args": "Run Kind"

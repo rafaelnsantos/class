@@ -9,7 +9,18 @@
       "command": "cd ${fileDirname} && kind ${fileBasenameNoExtension} --run",
       "presentation": {
         "showReuseMessage": false,
-        "clear": true
+        "clear": true,
+      }
+    },
+    {
+      "label": "Run Kind and focus",
+      "type": "shell",
+      "command": "cd ${fileDirname} && kind ${fileBasenameNoExtension} --run",
+      "presentation": {
+        "showReuseMessage": false,
+        "clear": true,
+        "focus": true,
+        "close": false
       }
     },
     {
