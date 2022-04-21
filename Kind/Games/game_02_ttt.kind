@@ -15,7 +15,7 @@ type TicTacToe {
 // Example of a finished game
 // TicTacToe.new(
 //   7,
-//   [ 
+//   [
 //     [some(TicTacToe.Piece.X), some(TicTacToe.Piece.X), some(TicTacToe.Piece.O)],
 //     [none                   , some(TicTacToe.Piece.X), some(TicTacToe.Piece.O)],
 //     [none                   , some(TicTacToe.Piece.O), some(TicTacToe.Piece.X)]
@@ -36,20 +36,15 @@ TicTacToe.init: TicTacToe
 // x = row
 // y = column
 TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
-  case game {
-    new: 
-      let row = List.get!(x, game.board)
-      case row {
-        none: none
-        some: 
-          let piece = List.get!(y, row.value)
-          case piece {
-            none: none
-            some: piece.value
-          } 
-      }
+  let row = List.get!(y, game@board)
+
+  let piece = List.get!(x, row <> [])
+
+  case piece {
+    none: none
+    some: piece.value
   }
-  
+
 
 // If possible, converts the user input to a coordinate {x, y}
 // A valid inputs is any pair of 2 numbers separated with a space:
@@ -60,56 +55,41 @@ TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
 // "   "
 TicTacToe.read(input: String): Maybe<Pair<Nat, Nat>>
   let strings = String.split(input, " ")
+
   case Nat.eql(List.length!(strings), 2) {
-    false: none
     true: 
       let x = List.get!(0, strings)
       let y = List.get!(1, strings)
-      case x y {
-        some some:
-          some(Pair.new!!(Nat.read(x.value), Nat.read(y.value)))
-      } default none
+      some({Nat.read(x <> "0"), Nat.read(y <> "0")})
+    false: none
   }
-	
 
 // Checks if a movement is valid
 // A valid movement is any movement inside the 3x3 board if the tile is unnocupied
 TicTacToe.is_move_valid(coord: Pair<Nat, Nat>, game: TicTacToe): Bool
-  case coord {
-    new:   
-      case Nat.ltn(coord.fst, 3) Nat.ltn(coord.snd, 3) TicTacToe.get(coord.fst, coord.snd, game) {
-        true true none: true
-      } default false
-  }
+  case Nat.ltn(coord@fst, 3) Nat.ltn(coord@snd, 3) TicTacToe.get(coord@fst, coord@snd, game) {
+    true true none: true
+  } default false
 
 
 // Who is the next one to play?
 TicTacToe.next_piece(game: TicTacToe): TicTacToe.Piece
-  case game {
-    new: 
-      case Nat.is_even(game.turn) {
-        true: TicTacToe.Piece.X
-        false: TicTacToe.Piece.O
-      }
-  }
+  if Nat.is_even(game@turn) then 
+    TicTacToe.Piece.X 
+  else 
+    TicTacToe.Piece.O
 
 
 // From an input, adds X or O (decided from TicTacToe.next_piece) at given location and increments the turn
 TicTacToe.move(coord: Pair<Nat, Nat>, game: TicTacToe): TicTacToe
-  case game coord {
-    new new: 
-      let piece = some(TicTacToe.next_piece(game))
-      let row = List.get!(coord.fst, game.board)
-      case row {
-        none: game
-        some: 
-          let newRow = List.set!(coord.snd, piece, row.value)
-          let newBoard = List.set!(coord.fst, newRow, game.board)
-          TicTacToe.new(Nat.succ(game.turn), newBoard)
-      }
-    } default game
-      
-      
+  open game  
+  let piece = TicTacToe.next_piece(game)
+  let row = List.get!(coord@snd, game.board)
+  let newRow = List.set!(coord@fst, some(piece), row <> [])
+  let newBoard = List.set!(coord@snd, newRow, game.board)
+  TicTacToe.new(Nat.succ(game.turn), newBoard)
+
+
 // Checks if 2 pieces are equal
 TicTacToe.Piece.eql(a: Maybe<TicTacToe.Piece>, b: Maybe<TicTacToe.Piece>): Bool
   case a b {
@@ -118,81 +98,35 @@ TicTacToe.Piece.eql(a: Maybe<TicTacToe.Piece>, b: Maybe<TicTacToe.Piece>): Bool
       O O: true
     } default false
   } default false
-    
+
+
+TicTacToe.winner.go(a: Pair<Nat, Nat>, b: Pair<Nat, Nat>, c: Pair<Nat, Nat>, game: TicTacToe): Maybe<TicTacToe.Piece>
+  let get = (p: Pair<Nat, Nat>) TicTacToe.get(p@fst, p@snd, game)
+
+  let f = (p1: Maybe<TicTacToe.Piece>, p2: Maybe<TicTacToe.Piece>)
+    if TicTacToe.Piece.eql(p1, p2) then
+      p1
+    else
+      none
+  let xs = [get(a), get(b), get(c)]
+
+  case xs {
+    nil: none
+    cons: List.foldl!!(xs.head, f, xs.tail)
+  }
 
 // Determines a winner if there is one
 TicTacToe.winner(game: TicTacToe): Maybe<TicTacToe.Piece>
-  case game {
-    new:
-      let result = Maybe.none<TicTacToe.Piece>
+  let result = none
+  for x in [0, 1, 2] with result:
+    let vertical = TicTacToe.winner.go({x, 0}, {x, 1}, {x, 2}, game)
+    let horizontal = TicTacToe.winner.go({0, x}, {1, x}, {2, x}, game)
+    Maybe.or!(result, Maybe.or!(vertical, horizontal))
 
-      // check vertical lines
-      for row in game.board with result:
-        case result {
-          some: result
-        } default
-          let c0 = List.get!(0, row)
-          let c1 = List.get!(1, row)
-          let c2 = List.get!(2, row)
-          case c0 c1 c2 {
-            some some some:
-              case TicTacToe.Piece.eql(c0.value, c1.value) TicTacToe.Piece.eql(c0.value, c2.value) {
-                true true: c0.value
-              } default none
-          } default none
+  let dia1 = TicTacToe.winner.go({0, 0}, {1, 1}, {2, 2}, game)
+  let dia2 = TicTacToe.winner.go({0, 2}, {1, 1}, {2, 0}, game)
 
-      let r0 = List.get!(0, game.board)
-      let r1 = List.get!(1, game.board)
-      let r2 = List.get!(2, game.board)
-
-      // check horizontal lines
-      for i in [0, 1, 2] with result:
-        case result {
-          some: result
-        } default
-          case r0 r1 r2 {
-            some some some:
-              let p0 = List.get!(i, r0.value)
-              let p1 = List.get!(i, r1.value)
-              let p2 = List.get!(i, r2.value)
-              case p0 p1 p2 {
-                some some some:
-                  case TicTacToe.Piece.eql(p0.value, p1.value) TicTacToe.Piece.eql(p0.value, p2.value) {
-                    true true: p0.value
-                  } default none
-              } default none
-            } default none
-          
-      case result {
-        some: result
-        none:
-          // check top left to bottom right diagonal
-          case r0 r1 r2 {
-            some some some: 
-              let p0 = List.get!(0, r0.value)
-              let p1 = List.get!(1, r1.value)
-              let p2 = List.get!(2, r2.value)
-              case p0 p1 p2 {
-                some some some:
-                  case TicTacToe.Piece.eql(p0.value, p1.value) TicTacToe.Piece.eql(p0.value, p2.value) {
-                    true true: p0.value
-                  } default // check bottom left to top right diagonal
-                      case r0 r1 r2 {
-                        some some some: 
-                          let p0 = List.get!(0, r2.value)
-                          let p1 = List.get!(1, r1.value)
-                          let p2 = List.get!(2, r0.value)
-                          case p0 p1 p2 {
-                            some some some:
-                              case TicTacToe.Piece.eql(p0.value, p1.value) TicTacToe.Piece.eql(p0.value, p2.value) {
-                                true true: p0.value
-                              } default none
-                          } default none
-                      } default none
-              } default none
-          } default none
-      }
-  } default none
+  Maybe.or!(result, Maybe.or!(dia1, dia2))
 
 // Converts the piece into a text to be shown
 TicTacToe.Piece.show(a: Maybe<TicTacToe.Piece>): String
@@ -206,16 +140,24 @@ TicTacToe.Piece.show(a: Maybe<TicTacToe.Piece>): String
 
 // Shows the board
 TicTacToe.show(game: TicTacToe): String
-  case game {
-    new:
-      let result = ""
-      for row in game.board with result:
-        for piece in row with result:
-          result | TicTacToe.Piece.show(piece)
-        result | "\n"
-      result
-  }
-  
+  open game
+  let result = ""
+
+  for y in [0, 1, 2] with result:
+
+    for x in [0, 1, 2] with result:
+      let piece = TicTacToe.Piece.show(TicTacToe.get(x, y, game))
+      if Nat.eql(x, 1) then 
+        result | " | " | piece | " | " 
+      else 
+        result | piece
+
+    if (Nat.eql(y, 2)) then 
+      result 
+    else 
+      result | "\n--|---|--\n"
+
+  result
 
 game_02_ttt: IO<Unit>
   IO {
@@ -226,28 +168,28 @@ game_02_ttt: IO<Unit>
   }
 
 
-// Do not edit below this line 
+// Do not edit below this line
 TicTacToe.play(game: TicTacToe): IO<Unit>
   IO {
     IO.print("Where do you wanna move?")
     // Receives user input
     get line = IO.get_line
-    
+
 		// Converts input into coordinates
 		let coords = TicTacToe.read(line)
 
-		get game = 
+		get game =
 			case coords {
 				none: IO {
 					IO.print("Invalid entry")
 					return game
-				}	
+				}
 				some:
 					// Checks if a movement is valid
 					let is_move_valid = TicTacToe.is_move_valid(coords.value, game)
 
 					if is_move_valid then IO {
-						// Returns the game after 
+						// Returns the game after
 						let new_game = TicTacToe.move(coords.value, game)
 						return new_game
 					}
@@ -265,12 +207,12 @@ TicTacToe.play(game: TicTacToe): IO<Unit>
     open game
 
     // If there is no winner, checks if its a draw
-    case Winner { 
-      none: 
+    case Winner {
+      none:
         if Nat.eql(game.turn, 9) then
           IO.print("Draw!")
         else TicTacToe.play(game)
-      some: case Winner.value { 
+      some: case Winner.value {
         X: IO.print("X Wins!")
         O: IO.print("O Wins!")
       }
