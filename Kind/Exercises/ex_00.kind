@@ -17,31 +17,23 @@ neg(b: Bool): Bool
 // Returns true if both inputs are true
 and(a: Bool, b: Bool): Bool
   case a b {
-    false false : false
-    false true  : false
-    true false  : false
-    true true   : true
-  }
+    true true: true
+  } default false
 
 // Or
 // Returs true if any input is true
 or(a: Bool, b: Bool): Bool
   case a b {
-    false false : false
-    false true  : true
-    true false  : true
-    true true   : true
-  }
+    false false: false
+  } default true
 
 // Equal
 // Returs true if both inputs are identical
 eql(a: Bool, b: Bool): Bool
     case a b {
     false false : true
-    false true  : false
-    true false  : false
     true true   : true
-  }
+  } default false
 
 ex_00: _
   eql(false, false)
