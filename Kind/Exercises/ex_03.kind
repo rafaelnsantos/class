@@ -5,19 +5,26 @@ type Nat {
   succ(pred: Nat)
 }
 
-// Increment
 // 2 + 1 = 3
 // 0 + 1 = 1
 inc(a: Nat): Nat  
-
-  ?i
+  Nat.succ(a)  
 
 // Decrement
 // 2 - 1 = 1
 // 0 - 1 = 0
 dec(a: Nat): Nat
-
-  ?d
+  case a {
+    zero: Nat.zero
+    succ: a.pred
+  }
 
 is_zero(a: Nat): Bool
-  ?a
+  case a {
+    zero: true
+  } default false
+
+ex_03: _
+  // inc(Nat.zero)
+  // dec(Nat.zero)
+  is_zero(Nat.succ(2))
