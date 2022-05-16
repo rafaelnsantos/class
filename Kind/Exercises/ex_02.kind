@@ -6,38 +6,85 @@ type PairBool {
 
 // Returns the first element of a pair
 fst(pair: PairBool): Bool
-  ?a
+  open pair
+  pair.fst
 
 // Returns the second element of a pair
 snd(pair: PairBool): Bool
-  ?b
+  open pair
+  pair.snd
 
 // Returns true if both elements of a PairBool are identical
 eql_elements(a: PairBool): Bool 
-  ?c
-  
+  open a
+
+  case a.fst a.snd {
+    true true: true
+    false false: true
+  } default false
+
 // Returns true if both Pairs are equal 
 // eql(PairBool.new(false, false), PairBool.new(true, true)) -> false 
 // eql(PairBool.new(true, false), PairBool.new(true, false)) -> true
 eql(a: PairBool, b: PairBool): Bool
-  ?f
+  open a
+  open b
+
+  case a.fst a.snd b.fst b.snd {
+    true true true true: true
+    false false false false: true
+    false true false true: true
+    true false true false: true
+  } default false
 
 // Returns true if both Pairs are different
 // not_eql(PairBool.new(false, false), PairBool.new(true, true)) -> true 
 // not_eql(PairBool.new(true, false), PairBool.new(true, false)) -> false
 not_eql(a: PairBool, b: PairBool): Bool
-  ?f
+  open a
+  open b
+
+  case a.fst a.snd b.fst b.snd {
+    true true true true: false
+    false false false false: false
+    false true false true: false
+    true false true false: false
+  } default true
   
 // Creates a PairBool from 2 Booleans
 create(a: Bool, b: Bool): PairBool
-  ?h
+  PairBool.new(a, b)
 
 // Inverts the values of a PairBool
 // neg(PairBool.new(false, false) -> PairBool.new(true, true)
 // neg(PairBool.new(false, true) -> PairBool.new(true, false)
 neg(pair: PairBool): PairBool
-  ?i
+  open pair
+
+  case pair.fst pair.snd {
+    false false: create(true, true)
+    false true: create(true, false)
+    true false: create(false, true)
+    true true: create(false, false)
+  }
 
 // Inverts the 2 elements of a PairBool
 swap(pair: PairBool): PairBool 
-  ?k
+  open pair
+
+  create(pair.snd, pair.fst)
+
+
+ex_02: _
+  let a = PairBool.new(true, false)
+  let b = PairBool.new(false, true)
+  let c = PairBool.new(false, false)
+  let d = PairBool.new(true, true)
+  // fst(b)
+  // snd(c)
+  // eql_elements(c)
+  // eql(d, d)
+  // not_eql(a, b)
+  // create(true, false)
+  // neg(d)
+  swap(b)
