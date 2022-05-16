@@ -36,15 +36,11 @@ TicTacToe.init: TicTacToe
 // x = Position in the row
 // y = Position in the column
 TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
-  let row = List.get!(y, game@board)
+  open game
 
-  let piece = List.get!(x, row <> [])
+  let row = game.board[y] <> []
 
-  case piece {
-    none: none
-    some: piece.value
-  }
-
+  row[x] <> Maybe.none!
 
 // If possible, converts the user input to a coordinate {x, y}
 // A valid inputs is any pair of 2 numbers separated with a space:
@@ -54,27 +50,32 @@ TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
 // "banana"
 // "   "
 TicTacToe.read(input: String): Maybe<Pair<Nat, Nat>>
-  let strings = String.split(input, " ")
-
-  case Nat.eql(List.length!(strings), 2) {
-    true: 
-      let x = List.get!(0, strings)
-      let y = List.get!(1, strings)
-      some({Nat.read(x <> "0"), Nat.read(y <> "0")})
-    false: none
-  }
+  switch String.eql(input) {
+    "0 0": Maybe.some!({0, 0})
+    "0 1": Maybe.some!({0, 1})
+    "0 2": Maybe.some!({0, 2})
+    "1 0": Maybe.some!({1, 0})
+    "1 1": Maybe.some!({1, 1})
+    "1 2": Maybe.some!({1, 2})
+    "2 0": Maybe.some!({2, 0})
+    "2 1": Maybe.some!({2, 1})
+    "2 2": Maybe.some!({2, 2})
+  } default Maybe.none!
 
 // Checks if a movement is valid
 // A valid movement is any movement inside the 3x3 board if the tile is unnocupied
 TicTacToe.is_move_valid(coord: Pair<Nat, Nat>, game: TicTacToe): Bool
-  case Nat.ltn(coord@fst, 3) Nat.ltn(coord@snd, 3) TicTacToe.get(coord@fst, coord@snd, game) {
-    true true none: true
-  } default false
+  open coord
 
-
+  case TicTacToe.get(coord.fst, coord.snd, game) {
+    none: true
+    some: false
+  }
+  
 // Who is the next one to play?
 TicTacToe.next_piece(game: TicTacToe): TicTacToe.Piece
-  if Nat.is_even(game@turn) then 
+  open game
+  if Nat.is_even(game.turn) then 
     TicTacToe.Piece.X 
   else 
     TicTacToe.Piece.O
@@ -82,11 +83,12 @@ TicTacToe.next_piece(game: TicTacToe): TicTacToe.Piece
 
 // From an input, adds X or O (decided from TicTacToe.next_piece) at given location and increments the turn
 TicTacToe.move(coord: Pair<Nat, Nat>, game: TicTacToe): TicTacToe
-  open game  
+  open game
+  open coord  
   let piece = TicTacToe.next_piece(game)
-  let row = List.get!(coord@snd, game.board)
-  let newRow = List.set!(coord@fst, some(piece), row <> [])
-  let newBoard = List.set!(coord@snd, newRow, game.board)
+  let row = List.get!(coord.snd, game.board) <> []
+  let newRow = List.set!(coord.fst, some(piece), row)
+  let newBoard = List.set!(coord.snd, newRow, game.board)
   TicTacToe.new(Nat.succ(game.turn), newBoard)
 
 
@@ -103,11 +105,11 @@ TicTacToe.Piece.eql(a: Maybe<TicTacToe.Piece>, b: Maybe<TicTacToe.Piece>): Bool
 TicTacToe.winner.go(a: Pair<Nat, Nat>, b: Pair<Nat, Nat>, c: Pair<Nat, Nat>, game: TicTacToe): Maybe<TicTacToe.Piece>
   let get = (p: Pair<Nat, Nat>) TicTacToe.get(p@fst, p@snd, game)
 
-  let f = (p1: Maybe<TicTacToe.Piece>, p2: Maybe<TicTacToe.Piece>)
-    if TicTacToe.Piece.eql(p1, p2) then
-      p1
-    else
-      none
+  let f = (p1: Maybe<TicTacToe.Piece>, p2: Maybe<TicTacToe.Piece>) 
+  if TicTacToe.Piece.eql(p1, p2) then 
+    p1 
+  else 
+    none
   let xs = [get(a), get(b), get(c)]
 
   case xs {
