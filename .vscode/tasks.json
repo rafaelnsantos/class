@@ -4,12 +4,21 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Kind",
+      "label": "kind-run",
       "type": "shell",
       "command": "cd ${fileDirname} && kind ${fileBasenameNoExtension} --run",
       "presentation": {
         "showReuseMessage": false,
         "clear": true,
+      }
+    },
+    {
+      "label": "kind-check",
+      "type": "shell",
+      "command": "cd ${fileDirname} && kind ${fileBasenameNoExtension} --check",
+      "presentation": {
+        "showReuseMessage": false,
+        "clear": true
       }
     },
     {
@@ -23,14 +32,5 @@
         "close": false
       }
     },
-    {
-      "label": "Check Kind",
-      "type": "shell",
-      "command": "cd ${fileDirname} && kind ${fileBasenameNoExtension} --check",
-      "presentation": {
-        "showReuseMessage": false,
-        "clear": true
-      }
-    }
   ]
 }

@@ -33,8 +33,8 @@ TicTacToe.init: TicTacToe
   ])
 
 // Gets the state of a given position in the board
-// x = row
-// y = column
+// x = Position in the row
+// y = Position in the column
 TicTacToe.get(x: Nat, y: Nat, game: TicTacToe): Maybe<TicTacToe.Piece>
   let row = List.get!(y, game@board)
 
@@ -139,6 +139,14 @@ TicTacToe.Piece.show(a: Maybe<TicTacToe.Piece>): String
   }
 
 // Shows the board
+// Example:
+//
+//  X | X | O 
+// -----------
+//  O | O | X 
+// -----------
+//  X | O | X 
+//
 TicTacToe.show(game: TicTacToe): String
   open game
   let result = ""

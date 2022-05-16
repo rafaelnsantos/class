@@ -29,7 +29,7 @@ Object.wins(a: Object, b: Object): Bool
     scissors paper: true
   } default false
 
-// If wins, return "Você ganhou" else "Você perdeu"
+// If wins return "You won", else "You lost"
 Object.match_result(win: Bool): String
   case win {
     true: "Você ganhou"
@@ -45,7 +45,8 @@ game_01_rps: IO(Unit)
     // Converts the user_input (String) to the Object type
     let user_object = Object.read(user_input)
 
-    // Number = Random -> 0, 1, 2
+    // Returns a random number below 3
+    // 0, 1 or 2
     get random_num = IO.random(3)
 
     // Converts random_num (Nat) to the Object type
