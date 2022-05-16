@@ -13,12 +13,27 @@ swap<A: Type, B: Type>(pair: Pair<A,B>): Pair<B,A>
 
 // Returns the first element of a pair
 first<A: Type, B: Type>(pair: Pair<A,B>): A
-  ?a
+  open pair
+
+  pair.fst
 
 // Returns the second element of a pair
 second<A: Type, B: Type>(pair: Pair<A,B>): B
-  ?a
+  open pair
+
+  pair.snd
 
 // Applies a function to both elements of a Pair
 map<A: Type, B: Type>(fn: A -> B, pair: Pair<A,A>): Pair<B,B>
-  ?a
+  open pair
+
+  Pair.new<B, B>(fn(pair.fst), fn(pair.snd))
+
+
+ex_05: _
+  let a = Pair.new<Nat, Nat>(2, 3)
+
+  // swap!!(a)
+  // first!!(a)
+  // second!!(a)
+  map!!(Nat.succ, a)
