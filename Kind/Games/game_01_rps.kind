@@ -5,7 +5,7 @@ type Object {
   scissors
 }
 
-// Converts a text to an Object. If not possible, returns rock
+// Converts a text to an Object. If not possible, returns stone
 Object.read(code: String): Object
   case String.eql(code, "paper") String.eql(code, "scissors") {
     false true: Object.scissors
