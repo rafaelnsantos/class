@@ -156,47 +156,75 @@ Inte.to_nat(a: Inte): Nat
 // int(false, 4) + int(false, 2) = -6
 // int(false, 4) + int(true,  2) = -2
 add(a: Inte, b: Inte): Inte
-  let an = Inte.to_nat(a)
-  let bn = Inte.to_nat(b)
-
   case a b {
-    neg neg: int(false, Nat.add(an, bn))
-    pos pos: int(true, Nat.add(an, bn))
-    neg pos: if an >? bn then int(false, Nat.sub(an, bn)) else int(true, Nat.sub(bn, an))
-    pos neg: if an >? bn then int(true, Nat.sub(an, bn)) else int(false, Nat.sub(bn, an))
+    pos pos: case a.num b.num {
+      zero zero: int(true, 0)
+      zero succ: b
+      succ zero: a
+      succ succ: add(inc(a), dec(b))
+    }
+    neg neg: case a.num b.num {
+      one one: int(false, 2)
+      one pred: dec(b)
+      pred one: dec(a)
+      pred pred: add(dec(a), inc(b))
+    }
+    pos neg: case a.num b.num {
+      zero one: b
+      zero pred: b
+      succ one: dec(a)
+      succ pred: add(dec(a), inc(b))
+    }
+    neg pos: case a.num b.num {
+      one zero: a
+      one succ: dec(b)
+      pred zero: a
+      pred succ: add(inc(a), dec(b))
+    }
   }
-
 
 // Multiplies two numbers
 // int(false, 2) * int(true, 3)  = -6
 // int(false, 4) * int(false, 5) = +20
-mul(a: Inte, b: Inte): Inte
-  let an = Inte.to_nat(a)
-  let bn = Inte.to_nat(b)
+mul.go(a: Inte, b: Inte): Inte
+  let apos = Inte.to_pos(a)
+  let bpos = Inte.to_pos(b)
 
-  let mult = Nat.mul(an, bn)
+  open apos
+  open bpos
+  case apos.num bpos.num {
+    succ succ: add(mul(apos, Inte.pos(bpos.num.pred)), apos)
+  } default int(true, 0)
+
+
+mul(a: Inte, b: Inte): Inte
+  let mul_abs = mul.go(a, b)
 
   case a b {
-    pos pos: int(true, mult)
-    neg neg: int(true, mult)
-  } default int(false, mult)
+    pos pos: mul_abs
+    neg neg: mul_abs
+  } default Inte.to_neg(mul_abs)
 
 // Subtracts two Interger numbers
 // int(false, 6) - int(false, 6) = +0
 // int(false, 4) - int(false, 6) = +2
 sub(a: Inte, b: Inte): Inte
-  let an = Inte.to_nat(a)
-  let bn = Inte.to_nat(b)
-
   case a b {
-    // -5 - (+4) = -9
-    neg pos: int(false, Nat.add(an, bn))
-                                // +10 - (+5)                       +5 - (+10)
-    pos pos: if an >? bn then int(true, Nat.sub(an, bn)) else int(false, Nat.sub(bn, an))
-                                // -10 - (-5)                       -5 - (-10)
-    neg neg: if an >? bn then int(false, Nat.sub(an, bn)) else int(true, Nat.sub(bn, an))
-    // +5 - (-5)
-    pos neg: int(true, Nat.add(an, bn))
+    neg neg: add(a, Inte.to_pos(b))
+    neg pos: case a.num b.num {
+      one zero: a
+      one succ: dec(b)
+      pred zero: a
+      pred succ: sub(dec(a), inc(b))
+    }
+    pos neg: add(a, Inte.to_pos(b))
+    pos pos: case a.num b.num {
+      zero zero: a
+      zero succ: Inte.to_neg(b)
+      succ zero: a
+      succ succ: sub(dec(a), dec(b))
+      
+    }
   }
 
 // Equal
@@ -204,11 +232,11 @@ eql(a: Inte, b: Inte): Bool // Given 2 numbers, it returns true if the 2 are the
   case a b {
     pos pos: case a.num b.num {
       zero zero: true
-      succ succ: eql(Inte.pos(a.num.pred), Inte.pos(b.num.pred))
+      succ succ: eql(dec(a), dec(b))
     } default false
     neg neg: case a.num b.num {
       one one: true
-      pred pred: eql(Inte.neg(a.num.succ), Inte.neg(b.num.succ))
+      pred pred: eql(inc(a), inc(b))
     } default false
   } default false
 
@@ -224,15 +252,12 @@ gtn(a: Inte, b: Inte): Bool // if A > B == True else false
     pos neg: true
     pos pos: case a.num b.num {
       succ zero: true
-      succ succ: gtn(Inte.pos(a.num.pred), Inte.pos(b.num.pred))
+      succ succ: gtn(dec(a), dec(b))
     } default false
     neg neg: case a.num b.num {
-      pred pred: gtn(Inte.neg(a.num.succ), Inte.neg(b.num.succ))
+      pred pred: gtn(inc(a), inc(b))
       one pred: true
     } default false
-
-
-
   }
 
 // Lower than
@@ -244,10 +269,10 @@ ltn(a: Inte, b: Inte): Bool // if A > B == False else true
     pos neg: false
     pos pos: case a.num b.num {
       zero succ: true
-      succ succ: ltn(Inte.pos(a.num.pred), Inte.pos(b.num.pred))
+      succ succ: ltn(dec(a), dec(b))
     } default false
     neg neg: case a.num b.num {
-      pred pred: ltn(Inte.neg(a.num.succ), Inte.neg(b.num.succ))
+      pred pred: ltn(inc(a), inc(b))
       pred one: true
     } default false
   }
@@ -259,13 +284,19 @@ minMax(a: Inte, b: Inte): Pair<Inte, Inte>
 // min(int(false, 1), int(true,  0)  = -1
 // min(int(false, 1), int(false, 3)) = -3
 min(a: Inte, b: Inte): Inte // if A < B then A else B
-  if gtn(a, b) then b else a
-
+  case ltn(a, b) {
+    true: a
+    false: b
+  }
+  
 // Maximum
 // max(int(false, 1), int(true,  0)) = +0
 // max(int(false, 1), int(false, 3)) = -1
 max(a: Inte, b: Inte): Inte // if A > B then A else B
-  if gtn(a, b) then a else b
+  case gtn(a, b) {
+    true: a
+    false: b
+  }
 
 // Half
 // Divides a number by two
@@ -277,62 +308,60 @@ max(a: Inte, b: Inte): Inte // if A > B then A else B
 // ||| - |
 // | - ||
 
-hlf(a: Inte): Inte
-  case a {
-    neg: if gtn(a, int(false, 4)) then int(false, 1) else 
-      let inte = add(a, int(true, 2))
-      let b = hlf(inte)
-      case b {
-        neg: Inte.neg(Neg.pred(b.num))
-        pos: int(false, 1)
-      }
-    pos: if ltn(a, int(true, 2)) then int(true, 0) else
-      let inte = sub(a, int(true, 2))
-      let b = hlf(inte)
-      case b {
-        neg: int(true, 0)
-        pos: Inte.pos(Pos.succ(b.num))
-      }
+hlf.go(a: Inte): Inte
+  let apos = Inte.to_pos(a)
+
+  case ltn(apos, int(true, 2)) {
+    true: int(true, 0)
+    false: inc(hlf(sub(apos, int(true, 2))))
   }
+
+hlf(a: Inte): Inte
+  let hlf_abs = hlf.go(a)
+
+  case a {
+    neg: Inte.to_neg(hlf_abs)
+    pos: hlf_abs
+  }
+
+Inte.to_neg(a: Inte): Inte
+  let an = Inte.to_nat(a)
+  int(false, an)
+
+
+Inte.to_pos(a: Inte): Inte
+  let an = Inte.to_nat(a)
+  int(true, an)
 
 // Division
 // int(true,  2)  / int(true,  2)  = +1
 // int(false, 8)  / int(true,  4)  = -2
 // int(false, 11) / int(false, 5)  = +2
 // int(true,  10) / int(false, 12) = +0
-
 div.go(a: Inte, b: Inte): Inte
-  let bn = Inte.to_nat(b)
-  let bpos = int(true, bn)
+  let apos = Inte.to_pos(a)
+  let bpos = Inte.to_pos(b)
 
-  case a {
-    neg: if gtn(a, mul(bpos, int(false, 2))) then int(false, 1) else 
-      let inte = add(a, bpos)
-      let c = div.go(inte, b)
-      case c {
-        neg: Inte.neg(Neg.pred(c.num))
-        pos: int(false, 1)
-      }
-    pos: if ltn(a, bpos) then int(true, 0) else
-      let inte = sub(a, bpos)
-      let c = div.go(inte, b)
-      case c {
-        neg: int(true, 0)
-        pos: Inte.pos(Pos.succ(c.num))
-      }
+  case ltn(apos, bpos) {
+    true: int(true, 0)
+    false: inc(div(sub(apos, bpos), bpos))
   }
 
+  // if ltn(apos, bpos) then int(true, 0) else
+  //   let inte = sub(apos, bpos)
+  //   let c = div.go(inte, bpos)
+  //   case c {
+  //     neg: int(true, 0)
+  //     pos: Inte.pos(Pos.succ(c.num))
+  //   }
 
 div(a: Inte, b: Inte): Inte 
-  let res = div.go(a, b)
-  let resn = Inte.to_nat(res)
+  let res_abs = div.go(a, b)
 
   case a b {
-    pos pos: int(true, resn)
-    neg neg: int(true, resn)
-  } default int(false, resn)
-
-  
+    pos pos: res_abs
+    neg neg: res_abs
+  } default Inte.to_neg(res_abs)
 
 ex_06: _
   let p5 = int(true, 5)
@@ -340,11 +369,14 @@ ex_06: _
   let n5 = int(false, 5)
   let n10 = int(false, 10)
   let z = int(true, 0)
+  let n1 = int(false, 1)
+  let p1 = int(true, 1)
 
-  // Inte.show(sub(p5, z))
+  // Inte.show(sub(p10, p5))
+  // gtn(p5, p10)
   // gtn(p5, p10)
   // ltn(p5, p10)
   // let {a, b} = minMax(p5, p10)
   // "min: " | Inte.show(a) | " max: " |Inte.show(b)
-   
-  Inte.show(div(n10, p5))
+  // Inte.show(hlf(n1))
+  Inte.show(div(n10, n5))
