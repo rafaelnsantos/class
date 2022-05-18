@@ -6,6 +6,5 @@
     },
     "workbench.iconTheme": "material-icon-theme",
     "terminal.integrated.defaultProfile.windows": "Command Prompt",
-    "terminal.integrated.gpuAcceleration": "on",
-    "workbench.colorTheme": "Dracula",
+    "terminal.integrated.gpuAcceleration": "on"
 }
