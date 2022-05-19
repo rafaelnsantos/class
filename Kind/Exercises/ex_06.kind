@@ -104,22 +104,9 @@ mul(a: Inte, b: Inte): Inte
 // Inte.from_nat(false, 6) - Inte.from_nat(false, 6) = +0
 // Inte.from_nat(false, 4) - Inte.from_nat(false, 6) = +2
 sub(a: Inte, b: Inte): Inte
-  case a b {
-    neg neg: add(a, Inte.to_pos(b))
-    neg pos: case a.num b.num {
-      one zero: a
-      one succ: dec(b)
-      pred zero: a
-      pred succ: sub(dec(a), dec(b))
-    }
-    pos neg: add(a, Inte.to_pos(b))
-    pos pos: case a.num b.num {
-      zero zero: a
-      zero succ: Inte.to_neg(b)
-      succ zero: a
-      succ succ: sub(dec(a), dec(b))
-      
-    }
+  case b {
+    neg: add(a, Inte.to_pos(b))
+    pos: add(a, Inte.to_neg(b))
   }
 
 // Equal
