@@ -1,0 +1,3 @@
+// Converts Neg to String
+Neg.show(n: Neg): String
+  "-"|Nat.show(Neg.to_nat(n))

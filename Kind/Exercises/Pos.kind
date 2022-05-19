@@ -1,0 +1,5 @@
+// Positive Numbers
+type Pos { 
+  zero
+  succ(pred: Pos)
+}

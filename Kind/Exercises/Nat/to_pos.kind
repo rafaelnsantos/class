@@ -1,0 +1,5 @@
+Nat.to_pos(n: Nat): Pos
+  case n { 
+    zero: Pos.zero
+    succ: Pos.succ(Nat.to_pos(n.pred))
+  }

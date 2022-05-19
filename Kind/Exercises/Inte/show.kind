@@ -1,0 +1,6 @@
+// Convertss Int to String
+Inte.show(n: Inte): String
+  case n {
+    neg: Neg.show(n.num) 
+    pos: Pos.show(n.num) 
+  }

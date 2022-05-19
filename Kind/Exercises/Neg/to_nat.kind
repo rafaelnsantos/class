@@ -1,0 +1,6 @@
+// Converts Neg to Nat
+Neg.to_nat(n: Neg): Nat
+  case n { 
+    one:  Nat.succ(Nat.zero)
+    pred: Nat.succ(Neg.to_nat(n.succ))
+  }

@@ -1,0 +1,5 @@
+Inte.to_nat(a: Inte): Nat
+  case a {
+    neg: Neg.to_nat(a.num)
+    pos: Pos.to_nat(a.num)
+  }

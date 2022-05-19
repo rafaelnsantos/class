@@ -1,0 +1,3 @@
+Inte.to_neg(a: Inte): Inte
+  let an = Inte.to_nat(a)
+  Inte.from_nat(false, an)

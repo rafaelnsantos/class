@@ -1,0 +1,5 @@
+// Integers
+type Inte { 
+  neg(num: Neg)
+  pos(num: Pos)
+}

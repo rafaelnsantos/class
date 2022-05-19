@@ -1,0 +1,5 @@
+Neg.succ(n: Neg): Neg
+  case n { 
+    one:  Neg.one
+    pred: n.succ
+  }

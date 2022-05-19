@@ -1,0 +1,6 @@
+// -0 does not exist
+// Negative Numbers
+type Neg { 
+  one
+  pred(succ: Neg)
+}

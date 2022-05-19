@@ -1,0 +1,3 @@
+// Converts Pos to String
+Pos.show(n: Pos): String
+  "+"|Nat.show(Pos.to_nat(n))

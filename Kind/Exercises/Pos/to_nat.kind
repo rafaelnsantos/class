@@ -1,0 +1,6 @@
+// Converts Pos to Nat
+Pos.to_nat(n: Pos): Nat
+  case n { 
+    zero:  Nat.zero
+    succ:  Nat.succ(Pos.to_nat(n.pred))
+  }

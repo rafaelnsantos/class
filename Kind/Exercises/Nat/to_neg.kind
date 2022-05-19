@@ -1,0 +1,9 @@
+nat_to_neg_aux(n: Nat): Neg
+  case n {
+    zero: Neg.one
+    succ: Neg.pred(nat_to_neg_aux(n.pred))
+  }
+
+// Converts Nat to Neg
+Nat.to_neg(n: Nat): Neg
+  Neg.succ(nat_to_neg_aux(n))

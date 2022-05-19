@@ -1,0 +1,9 @@
+Inte.from_nat(sign: Bool, num: Nat): Inte
+  case sign {
+    true: Inte.pos(Nat.to_pos(num))
+    false:
+      case num {
+        zero: Inte.pos(Pos.zero)
+        succ: Inte.neg(Nat.to_neg(num))
+      }
+  }
