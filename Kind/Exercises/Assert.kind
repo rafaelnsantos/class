@@ -1,0 +1,5 @@
+Assert<A: Type>(eqlFn: A -> A -> Bool, show: A -> String, expected: A, result: A, message: String): IO<Unit>
+  IO {
+    IO.print("Checking " | message | " = " | show(expected))
+    if eqlFn(expected, result) then IO.print("") else IO.print("Expected " | show(expected) | ", received " | show(result) | "\n")
+  }
