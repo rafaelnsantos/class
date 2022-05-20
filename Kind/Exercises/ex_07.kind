@@ -1,79 +1,296 @@
-// Advanced exercises involving Lists
+//Bits
 
-type List <A: Type> {
-  nil
-  cons(head: A, tail: List<A>)
+//File for exercises in Bits
+
+//e = empty
+//o = 0
+//i = 1
+type Bits { 
+  e
+  o(pred: Bits)
+  i(pred: Bits)
 }
 
-type Maybe <A: Type> {
-  none
-  some(value: A)
-}
+//a = Bits.i(Bits.i(Bits.e))
+//b = Bits.o(Bits.i(Bits.i(Bits.e)))
+//c = Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
+//d = Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
 
-// Returns pairs of the elements of the 2 input lists on the same index
-// Ex: zip!!([1,2], ["a","b","c"]) == [{1, "a"}, {2 , "b"}]
-// Ex: zip!!(["a", "b"], [3, 5])   == [{"a", 3}, {2 , "b"}]
-zip<A: Type, B: Type>(xs: List<A>, ys: List<B>): List<Pair<A,B>>
-  case xs ys {
-    cons cons: List.cons<Pair<A,B>>(Pair.new<A,B>(xs.head, ys.head), zip<A,B>(xs.tail, ys.tail))
-  } default []
 
-// Returns the smallest element of a List
-smallest(xs: List<Nat>): Nat
-  let f = (a: Nat, b: Nat) if Nat.ltn(a, b) then a else b
+//Verifies if it is an Empty Bit
 
-  case xs {
-    nil: Nat.zero
-    cons: List.foldl<Nat,Nat>(xs.head, f, xs.tail)
+//is_empty(a)      -> Bool.false
+//is_empty(b)      -> Bool.false
+//is_empty(c)      -> Bool.false
+//is_empty(d)      -> Bool.false
+//is_empty(Bits.e) -> Bool.true
+is_empty(b: Bits): Bool
+  case b {
+    e: true
+  } default false
+
+
+
+//Gets the Tail of a Bits structure
+
+//tail(a) -> Bits.i(Bits.e)
+//tail(b) -> Bits.i(Bits.i(Bits.e))
+//tail(c) -> Bits.o(Bits.i(Bits.i(Bits.e)))
+//tail(d) -> Bits.i(Bits.i(Bits.i(Bits.e)))
+tail(b: Bits): Bits
+  case b {
+    e: b
+  } default b.pred
+
+
+//Negates all Bits
+
+//not(a) -> Bits.o(Bits.o(Bits.e))
+//not(b) -> Bits.i(Bits.o(Bits.o(Bits.e)))
+//not(c) -> Bits.i(Bits.i(Bits.o(Bits.o(Bits.e))))
+//not(d) -> Bits.o(Bits.o(Bits.o(Bits.o(Bits.e))))
+nott(b: Bits): Bits
+  case b {
+    e: b
+    o: Bits.i(nott(b.pred))
+    i: Bits.o(nott(b.pred))
   }
 
-// Returns the same list without the smallest element
-delete_smallest(xs: List<Nat>): List<Nat>
-  case xs {
-    nil: []
-    cons: if smallest(xs) =? xs.head then xs.tail else List.cons<Nat>(xs.head, delete_smallest(xs.tail))
+//Increments a Bit
+
+//inc(a) -> Bits.o(Bits.o(Bits.i(Bits.e)))
+//inc(b) -> Bits.i(Bits.i(Bits.i(Bits.e)))
+//inc(c) -> Bits.i(Bits.o(Bits.i(Bits.i(Bits.e))))
+//inc(d) -> Bits.o(Bits.o(Bits.o(Bits.o(Bits.i(Bits.e)))))
+inc(b: Bits): Bits
+  case b {
+    e: Bits.i(b)
+    o: Bits.i(b.pred)
+    i: Bits.o(inc(b.pred))
   }
 
-// Returns the same list, in ascending order
-sort_ascending(xs: List<Nat>): List<Nat>
-  case xs {
-    nil: []
-    cons: List.cons<Nat>(smallest(xs), sort_ascending(delete_smallest(xs)))
+//Decrements a Bit
+
+//dec(a) -> Bits.o(Bits.i(Bits.e))
+//dec(b) -> Bits.i(Bits.o(Bits.i(Bits.e)))
+//dec(c) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.e))))
+//dec(d) -> Bits.o(Bits.i(Bits.i(Bits.i(Bits.e))))  
+dec(b: Bits): Bits
+  case b {
+    e: b
+    o: Bits.i(dec(b.pred))
+    i: case b.pred {
+      e: Bits.e
+    } default Bits.o(b.pred)
   }
 
-// Returns an element at an index from the list
-// if there is an element at that index
-//   returns Maybe.some!(element)
-// else
-//   returns Maybe.none!
-get<A: Type>(idx: Nat, xs: List<A>): Maybe<A>
-  case xs {
-    nil: Maybe.none<A>
-    cons: case idx {
-      zero: Maybe.some<A>(xs.head)
-      succ: get<A>(idx.pred, xs.tail)
-    }
+//Concatenate two Bits structures
+
+//concat(a,b) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)
+//concat(b,c) -> Bits.o(Bits.i(Bits.i(Bits.o(Bits.o(Bits.i(Bits.i(Bits.e)))))))
+//concat(c,d) -> Bits.o(Bits.o(Bits.i(Bits.i(Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))))))
+concat(a: Bits, b: Bits): Bits
+  case a {
+    e: b
+    i: Bits.i(concat(a.pred, b))
+    o: Bits.o(concat(a.pred, b))
   }
 
-// Removes all elements that does not match a condition
-// List.filter<Nat>(Nat.odd, [1, 2, 3, 4, 5]) = [1, 3, 5]
-filter<A: Type>(f: A -> Bool, xs: List<A>): List<A>
-  case xs {
-    nil: []
-    cons: case f(xs.head) {
-      true: List.cons<A>(xs.head, filter<A>(f, xs.tail))
-      false: filter<A>(f, xs.tail)
-    }
+
+
+//Adds two Bits structures
+
+//add(a,b) -> Bits.i(Bits.o(Bits.o(Bits.i(Bits.e))))
+//add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.o(Bits.e))))))
+//add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.o(Bits.i(Bits.e))))))
+add(a: Bits, b: Bits): Bits 
+  case b {
+    e: a
+  } default add(inc(a), dec(b))
+
+
+
+//Returns Bits.i if only both bits are Bits.i
+//a = Bits.i(Bits.i(Bits.e))         and(e11, e110) = e10
+//b = Bits.o(Bits.i(Bits.i(Bits.e))) 
+//and(a,b) -> Bits.o(Bits.i(Bits.e))
+//and(b,c) -> Bits.o(Bits.o(Bits.i(Bits.e)))
+//and(c,d) -> Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
+and(a: Bits, b: Bits): Bits
+  case a b {
+    i i: Bits.i(and(a.pred, b.pred))
+    o i: Bits.o(and(a.pred, b.pred))
+    i o: Bits.o(and(a.pred, b.pred))
+    o o: Bits.o(and(a.pred, b.pred))
+  } default Bits.e
+
+//Returns Bits.i if any of bits are Bits.i
+
+//or(a,b) -> Bits.i(Bits.i(Bits.i(Bits.e)))
+//or(b,c) -> Bits.o(Bits.i(Bits.i(Bits.i(Bits.e))))
+//or(c,d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
+or(a: Bits, b: Bits): Bits
+  case a b {
+    i i: Bits.i(and(a.pred, b.pred))
+    o i: Bits.i(and(a.pred, b.pred))
+    i o: Bits.i(and(a.pred, b.pred))
+  } default Bits.e
+
+
+
+//Verifies if both Bit structures are equal
+
+//eql(a,b) -> Bool.false
+//eql(b,c) -> Bool.false
+//eql(d,d) -> Bool.true
+eql(a: Bits, b: Bits): Bool
+  case a b {
+    e e: true
+    o o: eql(a.pred, b.pred)
+    i i: eql(a.pred, b.pred)
+  } default false
+
+
+//Reverses a Bits structure
+
+reverse_go(b: Bits, acum: Bits): Bits
+  case b {
+    e: acum
+    o: reverse_go(b.pred, Bits.o(acum))
+    i: reverse_go(b.pred, Bits.i(acum))
+  }
+
+
+//reverse(a) -> Bits.i(Bits.i(Bits.e))
+//reverse(b) -> Bits.i(Bits.i(Bits.o(Bits.e)))
+//reverse(c) -> Bits.i(Bits.i(Bits.o(Bits.o(Bits.e))))
+//reverse(d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
+reverse(b: Bits): Bits
+  reverse_go(b, Bits.e)
+
+
+
+
+//Gets the length of the Bits structure
+
+length_go(bs: Bits, acum: Nat): Nat
+  case bs {
+    e: acum
+  } default length_go(bs.pred, Nat.succ(acum))
+
+
+
+
+//length(a) -> Nat.succ(Nat.succ(Nat.zero))
+//length(b) -> Nat.succ(Nat.succ(Nat.succ(Nat.zero)))
+//length(c) -> Nat.succ(Nat.succ(Nat.succ(Nat.succ(Nat.zero))))
+//length(d) -> 4
+length(bs: Bits): Nat
+  length_go(bs, 0)
+
+
+
+//Multiplies two Bits structures
+// ||| x || = 0
+// ||| x | = |||
+// ||| x 0 = ||||||
+mul_go(a: Bits, b: Bits, acum: Bits): Bits
+  case b {
+    e: acum
+  } default mul_go(a, b.pred, add(acum, a))
+
+
+
+//mul(a,b) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
+//mul(b,c) -> Bits.o(Bits.o(Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))))
+mul(a: Bits, b: Bits): Bits
+  mul_go(a, b, Bits.e)
+
+
+
+//Drops a n Number of Bits starting from from the least significative bit
+
+//drop(a) -> Bits.i(Bits.e)
+//drop(b) -> Bits.i(Bits.i(Bits.e))
+//drop(c) -> Bits.o(Bits.i(Bits.i(Bits.e)))
+//drop(d) -> Bits.i(Bits.i(Bits.i(Bits.e)))
+drop(n: Nat, bs: Bits): Bits
+  case n {
+    zero: bs
+    succ: case bs {
+      e: Bits.e
+    } default drop(n.pred, bs.pred)
   }
   
+// take_go(3, ooiie, e)
+// take_go(2, oiie), oe)
+// take_go(1, iie), ooe)
+// take_go(0, ie), iooe)
+take_go(n: Nat, bs: Bits, acum: Bits): Bits
+  case n {
+    zero: acum
+    succ: case bs {
+      e: Bits.e
+      o: take_go(n.pred, bs.pred, Bits.o(acum))
+      i: take_go(n.pred, bs.pred, Bits.i(acum))
+    }
+  }
+//Takes n Bits from the structure, starting from the least significative bit
+//take(1, a) -> Bits.i(Bits.e)
+//take(2, b) -> Bits.o(Bits.i(Bits.e)) oiie
+//take(3, c) -> Bits.o(Bits.o(Bits.i(Bits.e)))
+//take(4, d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
+take(n: Nat, bs: Bits): Bits
+  reverse(take_go(n, bs, Bits.e))
+
+
+sub(a: Bits, b: Bits): Bits
+  case b {
+    e: a
+  } default sub(dec(a), dec(b))
+
+
+ltn(a: Bits, b: Bits): Bool
+  case a b {
+    // o o: aaa
+    // o i: aaa
+    o e: false
+    // i o: aaa
+    // i i: aaa
+    i e: false
+    e o: true
+    e i: true
+    e e: false
+  } default ltn(dec(a), dec(b))
+
+// |||||| / || = e
+// |||| / || = |
+// || / || = ||
+// e / || = |||
+div_go(a: Bits, b: Bits, acum: Bits): Bits
+  case ltn(a, b) {
+    true: acum
+    false: div_go(sub(a, b), b, inc(acum))
+  }
+
+div(a: Bits, b: Bits): Bits
+  div_go(a, b, Bits.e)
+
 
 ex_07: _
-  let a = [1, 2, 3, 400, 50]
-  let b = ["a", "b", "c"]
-  
-  // zip!!(a, b)
-  // smallest(a)
-  // List.show!(Nat.show, delete_smallest(a))
-  // List.show!(Nat.show, sort_ascending(a))
-  // get!(2, b)
-  filter!((n) Nat.gtn(n, 2), a)
+  IO {
+    Tests._07.is_empty(is_empty)
+    Tests._07.tail(tail)
+    Tests._07.not(nott)
+    Tests._07.inc(inc)
+    Tests._07.dec(dec)
+    Tests._07.concat(concat)
+    Tests._07.add(add)
+    Tests._07.and(and)
+    Tests._07.eql(eql)
+    Tests._07.reverse(reverse)
+    Tests._07.length(length)
+    Tests._07.mul(mul)
+    Tests._07.drop(drop)
+    Tests._07.take(take)
+  }

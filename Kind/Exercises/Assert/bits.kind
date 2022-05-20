@@ -1,0 +1,2 @@
+Assert.bits(name: String, result: Bits, expected: Bits): IO<Unit>
+  Assert<Bits>(Bits.eql, Bits.show, expected, result, name)
