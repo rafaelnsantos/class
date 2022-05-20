@@ -1,0 +1,56 @@
+// Basic exercises involving Lists
+
+type List <A: Type> {
+  nil
+  cons(head: A, tail: List<A>)
+}
+
+// Returns the list without the first element
+tail<A: Type>(xs: List<A>): List<A>
+  case xs {
+    nil: []
+    cons: xs.tail
+  }
+
+// Returns the length of a list
+length<A: Type>(xs: List<A>): Nat
+  case xs {
+    nil: Nat.zero
+    cons: Nat.succ(length<A>(xs.tail))
+  }
+
+// Concatenates two lists
+concat<A: Type>(xs: List<A>, ys: List<A>): List<A>
+  case xs ys {
+    cons nil: xs
+    nil cons: ys
+    cons cons: List.cons<A>(xs.head, concat<A>(xs.tail, ys))
+  } default []
+
+// Applies a function to all elements of a list
+map<A: Type, B: Type>(fn: A -> B, xs: List<A>): List<B>
+  case xs {
+    nil: []
+    cons: List.cons<B>(fn(xs.head), map<A, B>(fn, xs.tail))
+  }
+
+// Returns the same list, with the order reversed
+reverse<A: Type>(xs: List<A>): List<A>
+  reverse.go<A>(List.nil<A>, xs)
+
+reverse.go<A: Type>(new_list: List<A>, old_list: List<A>): List<A>
+  case old_list {
+    nil: new_list
+    cons: reverse.go<A>(List.cons<A>(old_list.head, new_list), old_list.tail)
+  }
+
+
+ex_07: _
+  let a = [2, 3, 4]
+  let b = [7, 8, 9]
+  // tail!(a)
+  // length!(a)
+  // List.show!(Nat.show, concat!(a, b))
+  // List.show!(Nat.show, map!!(Nat.succ, b))
+  List.show!(Nat.show, reverse!(b))
+  
