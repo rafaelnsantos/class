@@ -42,6 +42,9 @@ e01: Bits
 e0011: Bits
   Bits.i(Bits.i(Bits.o(Bits.o(Bits.e))))
 
+e11011: Bits
+  Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)))))
+
 
 Tests._07.is_empty(is_empty: Bits -> Bool): IO<Unit>
   IO {
@@ -85,6 +88,7 @@ Tests._07.concat(concat: Bits -> Bits -> Bits): IO<Unit>
     Assert.bits("concat 11 11", concat(e11, e11), e1111)
     Assert.bits("concat 1 1", concat(e1, e1), e11)
     Assert.bits("concat 10 10", concat(e10, e10), e1010)
+    Assert.bits("concat 11 110", concat(e11, e110), e11011)
   }
 
 
