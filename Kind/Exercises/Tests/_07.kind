@@ -8,6 +8,9 @@ e1: Bits
 e11: Bits
   Bits.i(Bits.i(Bits.e))
 
+e110001:  Bits
+  Bits.i(Bits.o(Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))))
+
 e110: Bits
   Bits.o(Bits.i(Bits.i(Bits.e)))
 
@@ -45,6 +48,12 @@ e01: Bits
 
 e0011: Bits
   Bits.i(Bits.i(Bits.o(Bits.o(Bits.e))))
+
+e0101: Bits
+ Bits.i(Bits.o(Bits.i(Bits.o(Bits.e))))
+
+e11001: Bits
+  Bits.i(Bits.o(Bits.o(Bits.i(Bits.i(Bits.e)))))
 
 
 Tests._07.is_empty(is_empty: Bits -> Bool): IO<Unit>
@@ -165,7 +174,9 @@ Tests._07.mul(mul: Bits -> Bits -> Bits): IO<Unit>
     Assert.bits("mul e e", mul(e, e), e)
     Assert.bits("mul e0 e", mul(e0, e), e)
     Assert.bits("mul e e0", mul(e, e0), e)
-    // Assert.bits("BONUS: mul 0011 0011", mul(e0011, e0011), e1001)
+    Assert.bits("mul e111 e111", mul(e111, e111), e110001)
+    Assert.bits("BONUS: mul 0011 0011", mul(e0011, e0011), e1001)
+    Assert.bits("BONUS: mul 0101 0101", mul(e0101, e0101), e11001)
     IO.print("Mul: All terms tested")
   }
 
@@ -178,6 +189,16 @@ Tests._07.drop(drop: Nat -> Bits -> Bits): IO<Unit>
     Assert.bits("drop 1 110", drop(1, e110), e11)
     Assert.bits("drop 2 111", drop(2, e111), e1)
     Assert.bits("drop 1 1001", drop(1, e1001), e100)
+
+
+    Assert.bits("drop 0 1001", drop(0, e1001), e1001)
+    Assert.bits("drop 0 e", drop(0, e), e)
+    Assert.bits("drop 1 e", drop(1, e), e)
+    Assert.bits("drop 1 0", drop(1, e0), e)
+
+    Assert.bits("drop 4 110001", drop(4, e110001), e11)
+    Assert.bits("drop 3 110001", drop(3, e110001), e110)
+
     IO.print("Drop: All terms tested")
   }
 
