@@ -75,15 +75,35 @@ inc(b: Bits): Bits
 //dec(b) -> Bits.i(Bits.o(Bits.i(Bits.e)))
 //dec(c) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.e))))
 //dec(d) -> Bits.o(Bits.i(Bits.i(Bits.i(Bits.e))))  
-dec(b: Bits): Bits
+
+// iie = oie
+
+dec.go(b: Bits): Bits
   case b {
-    e: b
-    o: Bits.i(dec(b.pred))
-    i: case b.pred {
-      e: Bits.e
-    } default Bits.o(b.pred)
+    e: Bits.e
+    o: case is_empty(b.pred) {
+      true: Bits.e
+      false: Bits.i(dec.go(b.pred))
+    }
+    i: case is_empty(b.pred) {
+      true: Bits.e
+      false: Bits.o(b.pred)
+    }
   }
 
+
+dec(b: Bits): Bits
+  case b {
+    e: Bits.e
+    o: case is_empty(b.pred) {
+      true: Bits.e
+      false: dec.go(b)
+    }
+    i: case is_empty(b.pred) {
+      true: Bits.o(Bits.e)
+      false: dec.go(b)
+    }
+  }
 //Concatenate two Bits structures
 
 //concat(a,b) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)
@@ -96,18 +116,27 @@ concat(a: Bits, b: Bits): Bits
     o: Bits.o(concat(a.pred, b))
   }
 
-
+is_zero(b: Bits): Bool
+  case b {
+    e: false
+  } default case dec(b) {
+    e: true
+  } default false
 
 //Adds two Bits structures
 
 //add(a,b) -> Bits.i(Bits.o(Bits.o(Bits.i(Bits.e))))
 //add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.o(Bits.e))))))
 //add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.o(Bits.i(Bits.e))))))
-add(a: Bits, b: Bits): Bits 
-  case b {
+add(a: Bits, b: Bits): Bits
+  case a {
+    e: b
+  } default case b {
     e: a
-  } default add(inc(a), dec(b))
-
+  } default case is_zero(b) {
+    true: a
+    false: add(inc(a), dec(b))
+  }
 
 
 //Returns Bits.i if only both bits are Bits.i
@@ -131,9 +160,10 @@ and(a: Bits, b: Bits): Bits
 //or(c,d) -> Bits.i(Bits.i(Bits.i(Bits.i(Bits.e))))
 or(a: Bits, b: Bits): Bits
   case a b {
-    i i: Bits.i(and(a.pred, b.pred))
-    o i: Bits.i(and(a.pred, b.pred))
-    i o: Bits.i(and(a.pred, b.pred))
+    i i: Bits.i(or(a.pred, b.pred))
+    o i: Bits.i(or(a.pred, b.pred))
+    i o: Bits.i(or(a.pred, b.pred))
+    o o: Bits.o(or(a.pred, b.pred))
   } default Bits.e
 
 
@@ -195,16 +225,21 @@ length(bs: Bits): Nat
 // ||| x | = |||
 // ||| x 0 = ||||||
 mul_go(a: Bits, b: Bits, acum: Bits): Bits
-  case b {
-    e: acum
-  } default mul_go(a, b.pred, add(acum, a))
-
+  case is_zero(b) {
+    true: acum
+  } default mul_go(a, dec(b), add(acum, a))
 
 
 //mul(a,b) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //mul(b,c) -> Bits.o(Bits.o(Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))))
 mul(a: Bits, b: Bits): Bits
-  mul_go(a, b, Bits.e)
+  case a b {
+    e e: Bits.e
+    e i: Bits.e
+    e o: Bits.e
+    o e: Bits.e
+    i e: Bits.e
+  } default mul_go(a, b, Bits.o(Bits.e))
 
 
 
