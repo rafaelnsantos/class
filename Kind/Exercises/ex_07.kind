@@ -227,19 +227,16 @@ length(bs: Bits): Nat
 mul_go(a: Bits, b: Bits, acum: Bits): Bits
   case is_zero(b) {
     true: acum
-  } default mul_go(a, dec(b), add(acum, a))
+    false: mul_go(a, dec(b), add(acum, a))
+  }
 
 
 //mul(a,b) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //mul(b,c) -> Bits.o(Bits.o(Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))))
 mul(a: Bits, b: Bits): Bits
-  case a b {
-    e e: Bits.e
-    e i: Bits.e
-    e o: Bits.e
-    o e: Bits.e
-    i e: Bits.e
-  } default mul_go(a, b, Bits.o(Bits.e))
+  case is_empty(a) is_empty(b) {
+    false false: mul_go(a, b, Bits.o(Bits.e))
+  } default Bits.e
 
 
 
