@@ -252,11 +252,7 @@ sub(a: Bits, b: Bits): Bits
 
 ltn(a: Bits, b: Bits): Bool
   case a b {
-    // o o: aaa
-    // o i: aaa
     o e: false
-    // i o: aaa
-    // i i: aaa
     i e: false
     e o: true
     e i: true
