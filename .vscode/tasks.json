@@ -6,21 +6,27 @@
     {
       "label": "kind-run",
       "type": "shell",
-      "command": "cd ${fileDirname} && kind ${fileBasenameNoExtension} --run",
+      "command": "kind ${fileBasenameNoExtension} --run",
       "presentation": {
         "showReuseMessage": false,
         "clear": true,
         "focus": true
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/Kind/Exercises"
       }
     },
     {
       "label": "kind-check",
       "type": "shell",
-      "command": "cd ${fileDirname} && kind ${file}",
+      "command": "kind ${file}",
       "presentation": {
         "showReuseMessage": false,
         "clear": true,
         "focus": true,
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/Kind/Exercises"
       }
     }
   ]
