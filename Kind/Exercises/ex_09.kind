@@ -67,7 +67,7 @@ filter<A: Type>(f: A -> Bool, xs: List<A>): List<A>
   }
   
 
-ex_08: _
+ex_09: _
   let a = [1, 2, 3, 400, 50]
   let b = ["a", "b", "c"]
   
