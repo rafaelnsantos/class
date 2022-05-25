@@ -1,0 +1,29 @@
+Tests._05.swap(swap: <A: Type, B: Type> -> Pair<A, B> -> Pair<B, A>): IO<Unit>
+  IO {
+    Assert.pair<String, String>({String.funcs, String.funcs}, "swap {first, second}", swap<String, String>({"first", "second"}), {"second", "first"})
+    Assert.pair<String, Nat>({String.funcs, Nat.funcs} "swap {first, 2}", swap<Nat, String>({2, "first"}), {"first", 2})
+    Assert.pair<Bool, Bool>({Bool.funcs, Bool.funcs} "swap {true, false}", swap<Bool, Bool>({true, false}), {false, true})
+    IO.print("swap: All terms tested")
+  }
+
+Pair.funcs<A: Type, B: Type>: Type
+  Pair<
+    Pair<A -> A -> Bool,  A -> String>
+    Pair<B -> B -> Bool,  B -> String>>
+
+Type.func<A: Type>: Type
+  Pair<
+    A -> A -> Bool
+    A -> String>
+
+Nat.funcs: Type.func<Nat>
+  {Nat.eql, Nat.show}
+
+String.funcs: Type.func<String>
+  {String.eql, (string) string}
+
+Bool.funcs: Type.func<Bool>
+  {Bool.eql, Bool.show}
+
+MaybeBool.funcs: Type.func<Maybe<Bool>>
+  {Maybe.eql<Bool>(Bool.eql), Maybe.show<Bool>(Bool.show)}  
