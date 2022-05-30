@@ -61,6 +61,7 @@ inc(b: Bits): Bits
   ?inc
 
 
+
 //Decrements a Bit
 
 //dec(a) -> Bits.o(Bits.i(Bits.e))
@@ -101,7 +102,6 @@ add(a: Bits, b: Bits): Bits
 //and(c,d) -> Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
 and(a: Bits, b: Bits): Bits
   ?and
-
 
 
 //Returns Bits.i if any of bits are Bits.i
