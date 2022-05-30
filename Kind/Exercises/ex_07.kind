@@ -93,17 +93,19 @@ dec.go(b: Bits): Bits
 
 
 dec(b: Bits): Bits
-  case b {
+  let c = fix(b)
+  case c {
     e: Bits.e
-    o: case is_empty(b.pred) {
+    o: case is_empty(c.pred) {
       true: Bits.e
       false: dec.go(b)
     }
-    i: case is_empty(b.pred) {
+    i: case is_empty(c.pred) {
       true: Bits.o(Bits.e)
       false: dec.go(b)
     }
   }
+
 //Concatenate two Bits structures
 
 //concat(a,b) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)
@@ -277,9 +279,10 @@ take(n: Nat, bs: Bits): Bits
 
 
 sub(a: Bits, b: Bits): Bits
-  case b {
-    e: a
-  } default sub(dec(a), dec(b))
+  case is_zero(b) || is_empty(b) {
+    true: a
+    false: sub(dec(a), dec(b))
+  }
 
 
 ltn(a: Bits, b: Bits): Bool
@@ -302,7 +305,7 @@ div_go(a: Bits, b: Bits, acum: Bits): Bits
   }
 
 div(a: Bits, b: Bits): Bits
-  div_go(a, b, Bits.e)
+  if is_zero(b) || is_empty(b) then Bits.o(Bits.e) else div_go(a, b, Bits.e)
 
 
 fix.go(b: Bits): Bits
