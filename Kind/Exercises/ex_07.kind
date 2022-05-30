@@ -87,10 +87,11 @@ concat(a: Bits, b: Bits): Bits
 //Adds two Bits structures
 
 //add(a,b) -> Bits.i(Bits.o(Bits.o(Bits.i(Bits.e))))
-//add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.o(Bits.e))))))
+//add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)))))
 add(a: Bits, b: Bits): Bits 
   ?add
+
 
 
 
@@ -101,7 +102,6 @@ add(a: Bits, b: Bits): Bits
 //and(c,d) -> Bits.o(Bits.o(Bits.i(Bits.i(Bits.e))))
 and(a: Bits, b: Bits): Bits
   ?and
-
 
 
 //Returns Bits.i if any of bits are Bits.i

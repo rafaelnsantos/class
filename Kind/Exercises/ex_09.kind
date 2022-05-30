@@ -17,7 +17,7 @@ zip<A: Type, B: Type>(xs: List<A>, ys: List<B>): List<Pair<A,B>>
   ?a
 
 // Returns the smallest element of a List
-smallest(xs: List<Nat>): Nat
+smallest(xs: List<Nat>): Maybe<Nat>
   ?s
 
 // Returns the same list without the smallest element
