@@ -89,7 +89,9 @@ concat(a: Bits, b: Bits): Bits
 //add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)))))
 add(a: Bits, b: Bits): Bits 
- ?add
+  ?add
+
+
 
 
 //Returns Bits.i if only both bits are Bits.i
