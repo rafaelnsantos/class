@@ -256,7 +256,7 @@ split.go(xs: String, match: String, acum: String): List<String>
   case xs {
     nil: [acum]
     cons: case Char.eql(xs.head, String.to_char(match)) {
-      true: [acum, xs.tail]
+      true: List.cons<String>(acum, split.go(xs.tail, match, ""))
       false: split.go(xs.tail, match, String.append(acum, xs.head))
     }
   }
@@ -303,4 +303,10 @@ flatten(lxs: List<String>): String
   case lxs {
     nil: ""
     cons: concat(lxs.head, flatten(lxs.tail))
+  }
+
+
+ex_10: IO<Unit>
+  IO {
+    Tests._10.is_upper(is_upper)
   }
