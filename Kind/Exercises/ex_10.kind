@@ -169,15 +169,6 @@ is_nat(xs: String): Bool
 
 
 
-// Divides the elements of a String into a list, using a match you decide
-
-//split(b, "l") -> ["He","" , "o"
-//split(c, "e") -> ["t", "xt"]
-split(xs: String, match: String): List<String>
-  ?split
-
-
-
 // Takes any elements while the condition is matched.
 
 //take_while(is_upper,    a) -> "HI"
@@ -242,3 +233,16 @@ take(n: Nat xs: String): String
 //slice(1, 3, c) -> "ex"
 slice(n: Nat, x: Nat, xs: String): String
   ?stringslice
+
+
+// Final Boss
+
+
+
+// Divides the elements of a String into a list, using a match you decide
+
+//split(b, "l")                                   -> ["He","" , "o"
+//split("Split example with matching space", " ") -> ["Split,example,with,matching,space]
+//split("You are awesome!", " ")                  -> ["You","are","awesome!"]
+split(xs: String, match: String): List<String>
+  ?split
