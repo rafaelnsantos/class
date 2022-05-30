@@ -58,7 +58,11 @@ notb(b: Bits): Bits
 //inc(c) -> Bits.i(Bits.o(Bits.i(Bits.i(Bits.e))))
 //inc(d) -> Bits.o(Bits.o(Bits.o(Bits.o(Bits.i(Bits.e)))))
 inc(b: Bits): Bits
-  ?inc
+  case b {
+    e: Bits.i(Bits.e)
+    o: Bits.i(b.pred)
+    i: Bits.o(inc(b.pred))
+  }
 
 
 
@@ -90,7 +94,19 @@ concat(a: Bits, b: Bits): Bits
 //add(b,c) -> Bits.o(Bits.i(Bits.o(Bits.o(Bits.i(Bits.e)))))
 //add(c,d) -> Bits.i(Bits.i(Bits.o(Bits.i(Bits.i(Bits.e)))))
 add(a: Bits, b: Bits): Bits 
-  ?add
+  case a {
+    e: b
+    o: case b{
+      e: a
+      o: Bits.o(add(a.pred, b.pred))
+      i: Bits.i(add(a.pred, b.pred))
+    }
+    i: case b {
+      e: a
+      o: Bits.i(add(a.pred, b.pred))
+      i: Bits.o(inc(add(a.pred, b.pred)))
+    }
+  }
 
 
 
@@ -193,18 +209,18 @@ take(n: Nat, bs: Bits): Bits
 
 ex_07: IO<Unit>
   IO {
-    Tests._07.is_empty(is_empty)
-    Tests._07.tail(tail)
-    Tests._07.not(notb)
+    // Tests._07.is_empty(is_empty)
+    // Tests._07.tail(tail)
+    // Tests._07.not(notb)
     Tests._07.inc(inc)
-    Tests._07.dec(dec)
-    Tests._07.concat(concat)
+    // Tests._07.dec(dec)
+    // Tests._07.concat(concat)
     Tests._07.add(add)
-    Tests._07.and(and)
-    Tests._07.eql(eql)
-    Tests._07.reverse(reverse)
-    Tests._07.length(length)
-    Tests._07.mul(mul)
-    Tests._07.drop(drop)
-    Tests._07.take(take)
+    // Tests._07.and(and)
+    // Tests._07.eql(eql)
+    // Tests._07.reverse(reverse)
+    // Tests._07.length(length)
+    // Tests._07.mul(mul)
+    // Tests._07.drop(drop)
+    // Tests._07.take(take)
   }
