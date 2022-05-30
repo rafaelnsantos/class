@@ -25,6 +25,9 @@ e1111: Bits
 
 e1000: Bits
   Bits.o(Bits.o(Bits.o(Bits.i(Bits.e))))
+
+e0000: Bits
+  Bits.o(Bits.o(Bits.o(Bits.o(Bits.e))))
   
 e1010: Bits
   Bits.o(Bits.i(Bits.o(Bits.i(Bits.e))))
@@ -101,6 +104,7 @@ Tests._07.dec(dec: Bits -> Bits): IO<Unit>
     Assert.bits("dec 1", dec(e1), e0)
     Assert.bits("dec 0", dec(e0), e)
     Assert.bits("dec e", dec(e), e)
+    Assert.bits("dec 0000", dec(e0000), e)
     IO.print("Dec: All terms tested")
   }
 
