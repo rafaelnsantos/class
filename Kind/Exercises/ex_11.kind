@@ -1,0 +1,49 @@
+// ListMap Exercises
+
+type ListMap <A: Type> { 
+  empty
+  cons(head: Pair<Nat, A>, tail: ListMap<A>)
+}
+
+// Inserts a value
+set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
+  ?set
+
+// Returns a Value from a Key (if there is one)
+get<A: Type>(key: Nat, lm: ListMap<A>): Maybe<A>
+  ?get
+
+// Applies a function to a Value from a Key
+mut<A: Type>(key: Nat, fn: A -> A, lm: ListMap<A>): ListMap<A>
+  ?mut
+
+// Converts the ListMap to a String
+show<A: Type>(fn: A -> String, lm: ListMap<A>): String
+  ?show
+
+// Checks if the ListMap has a key
+has<A:Type>(key: Nat, lm: ListMap<A>): Bool
+  ?has
+
+// Removes all Elements that doesn't satisfy a condition
+filter<A: Type>(cond: A -> Bool, lm: ListMap<A>): ListMap<A>
+  ?filter
+
+// Applies a function to all Values
+map<A: Type>(fn: A -> A, lm: ListMap<A>): ListMap<A>
+  ?map
+
+// Runs x gets and y sets
+stress_test(sets: Nat, gets: Nat): String
+  let map = ListMap.empty!
+  for i from 0 to sets with map:
+    set<Nat>(i, 50, map)
+  let text = "test"
+  for i from 0 to gets with text:
+    let get = get<Nat>(i, map)
+    text
+  text
+
+ex_11: _
+  // stress_test(10000, 10000)
+  "test"
