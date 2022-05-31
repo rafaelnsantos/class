@@ -1,0 +1,2 @@
+Assert.char(name: String, result: Char, expected: Char): IO<Unit>
+  Assert<Char>(Char.eql, Char.to_string, expected, result, name)
