@@ -95,10 +95,6 @@ to_upper(x: Char): Char
     true: U16.sub(x, 32)
   }
 
-
-
-
-
 //String Type
 type String { 
   nil,
@@ -350,6 +346,7 @@ ex_10: IO<Unit>
     Tests._10.to_bits(to_bits)
     Tests._10.stringequal(stringequal)
     Tests._10.is_nat(is_nat)
+    Tests._10.split(split)
     Tests._10.take_while(take_while)
     Tests._10.find(find)
     Tests._10.flatten(flatten)
