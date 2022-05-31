@@ -20,3 +20,8 @@ second<A: Type, B: Type>(pair: Pair<A,B>): B
 // Applies a function to both elements of a Pair
 map<A: Type, B: Type>(fn: A -> B, pair: Pair<A,A>): Pair<B,B>
   ?a
+
+ex_05:_ 
+  IO {
+    Tests._05.swap(swap)
+  }
