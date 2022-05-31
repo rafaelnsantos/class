@@ -41,3 +41,13 @@ get<A: Type>(idx: Nat, xs: List<A>): Maybe<A>
 filter<A: Type>(f: A -> Bool, xs: List<A>): List<A>
   ?f
   
+
+ex_09: IO<Unit>
+  IO {
+    Tests._09.zip(zip)
+    Tests._09.smallest(smallest)
+    Tests._09.delete_smallest(delete_smallest)
+    Tests._09.sort_ascending(sort_ascending)
+    Tests._09.get(get)
+    Tests._09.filter(filter)
+  }
