@@ -24,4 +24,7 @@ map<A: Type, B: Type>(fn: A -> B, pair: Pair<A,A>): Pair<B,B>
 ex_05:_ 
   IO {
     Tests._05.swap(swap)
+    Tests._05.first(first)
+    Tests._05.second(second)
+    Tests._05.map(map)
   }
