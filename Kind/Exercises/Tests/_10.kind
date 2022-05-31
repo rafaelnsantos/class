@@ -103,6 +103,7 @@ Tests._10.slice(slice: Nat -> Nat -> String -> String): IO<Unit>
 Tests._10.filter(filter: (Char -> Bool) -> String -> String): IO<Unit>
   IO {
     Assert.string("filter is_upper a", filter(Char.is_upper, a), "HI")
+    Assert.string("filter is_digit as334fs", filter(Char.is_digit, "as334fs"), "334")
     IO.print("filter: All terms tested")
   }
 
@@ -146,7 +147,7 @@ Tests._10.is_nat(is_nat: String -> Bool): IO<Unit>
 Tests._10.take_while(take_while: (Char -> Bool) -> String -> String): IO<Unit>
   IO {
     Assert.string("take_while is_upper a", take_while(Char.is_upper, a), "HI")
-    Assert.string("take_while is_digit a", take_while(Char.is_digit, "as334fs"), "334")
+    Assert.string("is_equal('t'), c", take_while(Char.eql('t'), c), "t")
     IO.print("take_while: All terms tested")
   }
 

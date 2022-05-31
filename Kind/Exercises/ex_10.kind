@@ -232,23 +232,26 @@ stringequal(xs: String, ys: String): Bool
     }
   } default false
 
-
-
-
 //Verifies if All String elements are Numbers
 
 //is_nat(a)      -> Bool.false
 //is_nat(b)      -> Bool.false
 //is_nat("1234") -> Bool.true
-is_nat(xs: String): Bool
+is_nat.go(xs: String, acum: Bool): Bool
   case xs {
-    nil: false
+    nil: true
     cons: case is_digit(xs.head) {
-      true: is_nat(xs.tail)
+      true: is_nat.go(xs.tail, true)
       false: false
     }
   }
 
+
+is_nat(xs: String): Bool
+  case xs {
+    nil: false
+    cons: is_nat.go(xs, false)
+  }
 
 
 // Divides the elements of a String into a list, using a match you decide
@@ -268,13 +271,19 @@ split(xs: String, match: String): List<String>
   split.go(xs, match, "")
 
 
-// Takes any elements of a list that matches the given condition
+// Takes any elements of a list while the condition is matched
 
 //take_while(is_upper,    a) -> "HI"
-//take_while(is_lower,    b) -> "ello"
-//take_while(is_equal('t'), c) -> "tt"
+//take_while(is_lower,    b) -> ""
+//take_while(is_equal('t'), c) -> "t"
 take_while(cond: Char -> Bool, xs: String): String
-  filter(cond, xs)
+  case xs {
+    nil: ""
+    cons: case cond(xs.head) {
+      true: String.cons(xs.head, take_while(cond, xs.tail))
+      false: ""
+    }
+  }
 
 
 
