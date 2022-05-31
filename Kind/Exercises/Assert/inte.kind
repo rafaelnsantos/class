@@ -10,5 +10,9 @@ eql(a: Inte, b: Inte): Bool // Given 2 numbers, it returns true if the 2 are the
     } default false
   } default false
 
+Inte.funcs: Assert.func<Inte>
+  { eql, Inte.show }
+
+
 Assert.inte(name: String, result: Inte, expected: Inte): IO<Unit>
-  Assert<Inte>(eql, Inte.show, expected, result, name)
+  Assert<Inte>(Inte.funcs, expected, result, name)

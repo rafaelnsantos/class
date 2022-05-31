@@ -1,2 +1,5 @@
+Bits.funcs: Assert.func<Bits> 
+  { Bits.eql, (b) Bits.show(Bits.reverse(b)) }
+
 Assert.bits(name: String, result: Bits, expected: Bits): IO<Unit>
-  Assert<Bits>(Bits.eql, (b) Bits.show(Bits.reverse(b)), expected, result, name)
+  Assert<Bits>(Bits.funcs, expected, result, name)
