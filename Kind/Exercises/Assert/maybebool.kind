@@ -10,5 +10,8 @@ MaybeBool.show(a: MaybeBool): String
     some: Bool.show(a.value)
   }
 
+Assert.maybeBool.funcs: Assert.func<MaybeBool>
+  { weqweqwe, MaybeBool.show }
+
 Assert.maybebool(name: String, result: MaybeBool, expected: MaybeBool): IO<Unit>
-  Assert<MaybeBool>(weqweqwe, MaybeBool.show, expected, result, name)
+  Assert<MaybeBool>(Assert.maybeBool.funcs, expected, result, name)
