@@ -5,10 +5,7 @@ Pair.show<A: Type, B: Type>(s_fst: A -> String, s_snd: B -> String a: Pair<A, B>
   "{" | s_fst(a@fst) | "," | s_snd(a@snd) | "}"
 
 Assert.pair<A: Type, B: Type>(
-  pair_functions:
-    Pair<
-      Pair<A -> A -> Bool, A -> String>
-      Pair<B -> B -> Bool, B -> String>>
+  pair_functions: Pair<Assert.func<A>, Assert.func<B>>
   name: String
   result: Pair<A, B>
   expected: Pair<A, B>
@@ -16,4 +13,4 @@ Assert.pair<A: Type, B: Type>(
   let {fst, snd} = pair_functions
   let eql  = Pair.eql<A,  B>(fst@fst, snd@fst)
   let show = Pair.show<A, B>(fst@snd, snd@snd)
-  Assert<Pair<A, B>>(eql, show, expected, result, name)
+  Assert<Pair<A, B>>({ eql, show }, expected, result, name)
