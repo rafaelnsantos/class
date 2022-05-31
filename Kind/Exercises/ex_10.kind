@@ -69,7 +69,6 @@ equal(x: Char, y: Char): Bool
 //to_digit('0') -> Nat.zero
 //to_digit('1') -> Nat.succ(Nat.zero)
 //to_digit('4') -> 4
-// TODO: mudar retorno para Maybe<Nat>
 to_digit(x: Char): Nat
   ?to_digit
 
@@ -182,11 +181,11 @@ take_while(cond: Char -> Bool, xs: String): String
 
 //Finds the index of the head for the first occurence if any of the Characters are equal
 
-//find(a, "H") -> 0
-//find(b, "l") -> 2
-//find(c, "x") -> 2
-// TODO: talvez mudar o retorno para Maybe<Nat>?
-find(xs: String, x: Char): Nat
+//find(a, "H") -> Maybe.some(0)
+//find(b, "l") -> Maybe.some(2)
+//find(c, "x") -> Maybe.some(2)
+//find(c, "z") -> Maybe.none
+find(xs: String, x: Char): Maybe<Nat>
   ?find
 
 
