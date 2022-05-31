@@ -23,12 +23,7 @@ ops: List<Pair<Char, Nat -> Nat -> Nat>>
 // get_first_num("pos d 890")    = "pos"
 // get_first_num("932 / asdas")  = "932"
 get_first_num(exp: String): String 
-	let strings = String.split(exp, " ")[0]
-
-  case strings {
-    none: ""
-    some: strings.value
-  }
+	String.split(exp, " ")[0] <> "err"
 
 // Gets a expression operator (it can either be a operator or not) as a Char 
 // Examples: 
@@ -37,12 +32,13 @@ get_first_num(exp: String): String
 // get_operator("pos d 890")    = "d"
 // get_operator("932 / asdas")  = "/"
 get_operator(exp: String): Char 
-	let strings = String.split(exp, " ")[1]
+	let op = String.split(exp, " ")[1]
 
-  case strings {
-    none: ' '
-    some: String.to_char(strings.value)
-  }
+	without op: ' '
+
+	String.to_char(op)
+
+
 
 // Gets the second element (it can either be a number or not) of a expression as a String
 // Examples: 
@@ -51,11 +47,7 @@ get_operator(exp: String): Char
 // get_second_num("pos d 890")    = "890"
 // get_second_num("932 / asdas")  = "asdas" 
 get_second_num(exp: String): String 
-	let strings = String.split(exp, " ")[2]
-  case strings {
-    none: ""
-    some: strings.value
-  }
+	String.split(exp, " ")[2] <> "err"
 
 // Cheks if all elements of the expression are valid (first number, operator and second number)
 // You can choose what operators will work in your calculator. 
@@ -64,10 +56,8 @@ get_second_num(exp: String): String
 // is_expression_valid("1239 * 832")   = true
 // is_expression_valid("pos d 890")    = false
 // is_expression_valid("932 / asdas")  = false
-is_expression_valid(fst: String, op: Char, snd: String): Bool 	
-	case String.is_nat(fst) String.is_nat(snd) {
-    true true: List.found!((p) Char.eql(p@fst, op), ops)
-  } default false
+is_expression_valid(fst: String, op: Char, snd: String): Bool 
+	String.is_nat(fst) && String.is_nat(snd) && List.found!((p) Char.eql(p@fst, op), ops)
 
 // Gets the expression result 
 get_result(fst: Nat, op: Char, snd: Nat): Nat
