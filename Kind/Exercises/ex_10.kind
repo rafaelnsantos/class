@@ -237,38 +237,45 @@ stringequal(xs: String, ys: String): Bool
 //is_nat(a)      -> Bool.false
 //is_nat(b)      -> Bool.false
 //is_nat("1234") -> Bool.true
-is_nat.go(xs: String, acum: Bool): Bool
-  case xs {
-    nil: true
-    cons: case is_digit(xs.head) {
-      true: is_nat.go(xs.tail, true)
-      false: false
-    }
-  }
-
-
 is_nat(xs: String): Bool
   case xs {
     nil: false
-    cons: is_nat.go(xs, false)
-  }
-
-
-// Divides the elements of a String into a list, using a match you decide
-split.go(xs: String, match: String, acum: String): List<String>
-  case xs {
-    nil: [acum]
-    cons: case Char.eql(xs.head, String.to_char(match)) {
-      true: List.cons<String>(acum, split.go(xs.tail, match, ""))
-      false: split.go(xs.tail, match, String.append(acum, xs.head))
+    cons: case xs.tail {
+      nil: true
+      cons: is_digit(xs.head) && is_nat(xs.tail)
     }
   }
 
+string_length(xs: String): Nat
+  case xs {
+    nil: 0
+    cons: Nat.succ(string_length(xs.tail))
+  }
+
+// Divides the elements of a String into a list, using a match you decide
+split.go(xs: String, match: String, acum: String, acum2: List<String>): List<String>
+  let matchLength = string_length(match)
+  case xs {
+    nil: List.append<String>(acum2, acum)
+    cons: case stringequal(take(matchLength, xs), match) {
+      true: 
+        // let acum2 = if stringequal(acum, "") then acum2 else List.append<String>(acum2, acum)
+        split.go(drop(matchLength, xs), match, "", List.append<String>(acum2, acum))
+      false: 
+        split.go(xs.tail, match, String.append(acum, xs.head), acum2)
+    }
+  }
+
+replace(remove: String, add: String, str: String): String
+  join(add, split(str, remove))
+
 // ex_10: _
-// split(b, "l") //-> ["He","" , "o"
-// split(c, "e") // -> ["t", "xt"]
+// split(b, "ll") //-> ["He","" , "o"
+// split(c, "te") // -> ["t", "xt"]
+
 split(xs: String, match: String): List<String>
-  split.go(xs, match, "")
+  split.go(xs, match, "", [])
+
 
 
 // Takes any elements of a list while the condition is matched
@@ -312,6 +319,15 @@ flatten(lxs: List<String>): String
   case lxs {
     nil: ""
     cons: concat(lxs.head, flatten(lxs.tail))
+  }
+
+join(sep: String, lxs: List<String>): String
+  case lxs {
+    nil: ""
+    cons: case lxs.tail {
+      nil: lxs.head
+      cons: concat(concat(lxs.head, sep), join(sep, lxs.tail))
+    }
   }
 
 

@@ -95,7 +95,7 @@ Tests._10.take(take: Nat -> String -> String): IO<Unit>
 Tests._10.slice(slice: Nat -> Nat -> String -> String): IO<Unit>
   IO {
     Assert.string("slice 1 2 a", slice(1, 2, a), "I")
-    Assert.string("slice 2 4 b", slice(2, 4, b), "ll")
+    Assert.string("slice 2 4 b", slice(2, 4, b), "llo")
     Assert.string("slice 1 2 c", slice(1, 2, c), "ex")
     IO.print("slice: All terms tested")
   }
