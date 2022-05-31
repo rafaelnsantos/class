@@ -1,0 +1,2 @@
+Assert.string(name: String, result: String, expected: String): IO<Unit>
+  Assert<String>(String.eql, (s) s, expected, result, name)

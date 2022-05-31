@@ -309,4 +309,23 @@ flatten(lxs: List<String>): String
 ex_10: IO<Unit>
   IO {
     Tests._10.is_upper(is_upper)
+    Tests._10.is_lower(is_lower)
+    Tests._10.is_digit(is_digit)
+    Tests._10.equal(equal)
+    Tests._10.to_digit(to_digit)
+    Tests._10.to_lower(to_lower)
+    Tests._10.to_upper(to_upper)
+    Tests._10.concat(concat)
+    Tests._10.drop(drop)
+    Tests._10.take(take)
+    Tests._10.slice(slice)
+    Tests._10.filter(filter)
+    Tests._10.map(map)
+    Tests._10.string_to_upper(string_to_upper)
+    Tests._10.to_bits(to_bits)
+    Tests._10.stringequal(stringequal)
+    Tests._10.is_nat(is_nat)
+    Tests._10.take_while(take_while)
+    Tests._10.find(find)
+    Tests._10.flatten(flatten)
   }
