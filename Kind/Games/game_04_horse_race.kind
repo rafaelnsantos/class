@@ -94,17 +94,45 @@ game_04_horse_race: _
 
 // Your strategy:
 my_strategy: Strategy
-  Strategy.race(
-    [0, 1, 2, 3, 4],
-    (linha1) Strategy.race([5, 6, 7, 8, 9],
-    (linha2) Strategy.race([10, 11, 12, 13, 14],
-    (linha3) Strategy.race([15, 16, 17, 18, 19], 
-    (linha4) Strategy.race([20, 21, 22, 23, 24], 
-    (linha5) Strategy.race([linha1[0] <> 0, linha2[0] <> 0, linha3[0] <> 0, linha4[0] <> 0, linha5[0] <> 0],
-    (linha6) Strategy.race([linha1[1] <> 0, linha2[1] <> 0, linha3[1] <> 0, linha4[1] <> 0, linha5[1] <> 0],
-    (linha7) Strategy.race([linha1[2] <> 0, linha2[2] <> 0, linha3[2] <> 0, linha4[2] <> 0, linha5[2] <> 0],
-    (linha8) Strategy.race([linha6[0] <> 0, linha6[1] <> 0, linha6[2] <> 0, linha7[0] <> 0, linha7[1] <> 0],
-    (linha9) Strategy.race([linha8[0] <> 0, linha8[1] <> 0, linha8[2] <> 0, linha7[2] <> 0, linha9[2] <> 0],
-    (linha10) Strategy.race([linha10[0] <> 0, linha10[1] <> 0, linha10[2] <> 0, linha9[0] <> 0, linha9[1] <> 1],
-    (linha11) Strategy.end(linha11[0] <> 0, linha11[1] <> 0, linha11[2] <> 0)))))))))))
-  )
+  Strategy.race([0, 1, 2, 3, 4], (corrida1)
+  Strategy.race([5, 6, 7, 8, 9], (corrida2)
+  Strategy.race([10, 11, 12, 13, 14], (corrida3)
+  Strategy.race([15, 16, 17, 18, 19], (corrida4)
+  Strategy.race([20, 21, 22, 23, 24], (corrida5)
+  
+  // primeiro de cada corrida
+  Strategy.race([corrida1[0] <> 0, corrida2[0] <> 0, corrida3[0] <> 0, corrida4[0] <> 0, corrida5[0] <> 0], (corrida6)
+
+  let f = (a: Nat, xs: List<Nat>) List.found<Nat>((i) Nat.eql(i, corrida6[a] <> 0), xs)
+
+  // segundo e terceiro do primeiro da sexta corrida
+  let next_race1 = switch Bool.and(true) {
+    f(0, corrida1): [corrida1[1] <> 0, corrida1[2] <> 0]
+    f(0, corrida2): [corrida2[1] <> 0, corrida2[2] <> 0]
+    f(0, corrida3): [corrida3[1] <> 0, corrida3[2] <> 0]
+    f(0, corrida4): [corrida4[1] <> 0, corrida4[2] <> 0]
+    f(0, corrida5): [corrida5[1] <> 0, corrida5[2] <> 0]
+  } default []
+
+  // primeiro e segundo do segundo da sexta corrida
+  let next_race2 = switch Bool.and(true) {
+    f(1, corrida1): [corrida1[0] <> 0, corrida1[1] <> 0]
+    f(1, corrida2): [corrida2[0] <> 0, corrida2[1] <> 0]
+    f(1, corrida3): [corrida3[0] <> 0, corrida3[1] <> 0]
+    f(1, corrida4): [corrida4[0] <> 0, corrida4[1] <> 0]
+    f(1, corrida5): [corrida5[0] <> 0, corrida5[1] <> 0]
+  } default []
+
+  // primeiro do terceiro da sexta corrida
+  let next_race3 = switch Bool.and(true) {
+    f(2, corrida1): [corrida1[0] <> 0]
+    f(2, corrida2): [corrida2[0] <> 0]
+    f(2, corrida3): [corrida3[0] <> 0]
+    f(2, corrida4): [corrida4[0] <> 0]
+    f(2, corrida5): [corrida5[0] <> 0]
+  } default []
+
+  Strategy.race(next_race1 ++ next_race2 ++ next_race3, (corrida7) 
+  
+  Strategy.end(corrida6[0] <> 0, corrida7[0] <> 0, corrida7[1] <> 0)
+  )))))))
