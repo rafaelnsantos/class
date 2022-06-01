@@ -20,7 +20,7 @@ set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
     empty: ListMap.cons<A>({key, value}, ListMap.empty<A>)
     cons: case Nat.eql(key, lm.head@fst) {
       true: ListMap.cons<A>({key, value}, lm.tail)
-      false: set<A>(key, value, lm.tail)
+      false: ListMap.cons<A>(lm.head, set<A>(key, value, lm.tail))
     }
   }
 

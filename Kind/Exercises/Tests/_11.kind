@@ -16,6 +16,16 @@ TestMap: ListMap<Nat>
   ListMap.cons<Nat>(({5, 10})
   ListMap.empty<Nat>))))))
 
+TestMapSet: ListMap<Nat>
+  ListMap.cons<Nat>(({0, 5})
+  ListMap.cons<Nat>(({1, 6})
+  ListMap.cons<Nat>(({2, 7})
+  ListMap.cons<Nat>(({3, 12})
+  ListMap.cons<Nat>(({4, 9})
+  ListMap.cons<Nat>(({5, 10})
+  ListMap.empty<Nat>))))))
+
+
 TestMapSucc: ListMap<Nat>
   ListMap.cons<Nat>(({0, 6})
   ListMap.cons<Nat>(({1, 7})
@@ -42,6 +52,7 @@ TestMapOdd: ListMap<Nat>
 Tests._11.set(set: <A: Type> -> Nat -> A -> ListMap<A> -> ListMap<A>): IO<Unit>
   IO {
     Assert.listmap<Nat>(Assert.nat.funcs, "set 1 1 empty", set<Nat>(1, 1, lm), lm1)
+    Assert.listmap<Nat>(Assert.nat.funcs, "set 3 12 TestMap", set<Nat>(3, 12, TestMap), TestMapSet)
     IO.print("set: All terms tested")
   }
 
