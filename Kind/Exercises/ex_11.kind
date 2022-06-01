@@ -1,0 +1,100 @@
+// ListMap Exercises
+
+TestMap: ListMap<Nat>
+  ListMap.cons<Nat>(Pair.new<Nat, Nat>(0, 5)
+  ListMap.cons<Nat>(Pair.new<Nat, Nat>(1, 6)
+  ListMap.cons<Nat>(Pair.new<Nat, Nat>(2, 7)
+  ListMap.cons<Nat>(Pair.new<Nat, Nat>(3, 8)
+  ListMap.cons<Nat>(Pair.new<Nat, Nat>(4, 9)
+  ListMap.cons<Nat>(Pair.new<Nat, Nat>(5, 10)
+  ListMap.empty<Nat>))))))
+
+type ListMap <A: Type> { 
+  empty
+  cons(head: Pair<Nat, A>, tail: ListMap<A>)
+} 
+
+// Inserts a value
+set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
+  case lm {
+    empty: ListMap.cons<A>({key, value}, ListMap.empty<A>)
+    cons: case Nat.eql(key, lm.head@fst) {
+      true: ListMap.cons<A>({key, value}, lm.tail)
+      false: set<A>(key, value, lm.tail)
+    }
+  }
+
+// Returns a Value from a Key (if there is one)
+get<A: Type>(key: Nat, lm: ListMap<A>): Maybe<A>
+  case lm {
+    empty: Maybe.none<A>
+    cons: case Nat.eql(key, lm.head@fst) {
+      true: Maybe.some<A>(lm.head@snd)
+      false: get<A>(key, lm.tail)
+    }
+  }
+
+// Applies a function to a Value from a Key
+mut<A: Type>(key: Nat, fn: A -> A, lm: ListMap<A>): ListMap<A>
+  let el = get<A>(key, lm)
+
+  without el: lm
+  
+  set<A>(key, fn(el), lm)
+
+show.go<A: Type>(fn: A -> String, lm: ListMap<A>): String
+  case lm {
+    empty: ""
+    cons: "{" | Nat.show(lm.head@fst) | "," | fn(lm.head@snd) | "}"  | case lm.tail {
+      empty: ""
+      cons: ", "
+    } | show.go<A>(fn, lm.tail)
+  }
+
+// Converts the ListMap to a String
+show<A: Type>(fn: A -> String, lm: ListMap<A>): String
+  "[" | show.go<A>(fn, lm) | "]"
+
+// Checks if the ListMap has a key
+has<A:Type>(key: Nat, lm: ListMap<A>): Bool
+  let el = get<A>(key, lm)
+  without el: false
+  true
+
+// Removes all Elements that doesn't satisfy a condition
+filter<A: Type>(cond: A -> Bool, lm: ListMap<A>): ListMap<A>
+  case lm {
+    empty: ListMap.empty<A>
+    cons: case cond(lm.head@snd) {
+      true: ListMap.cons<A>(lm.head, filter<A>(cond, lm.tail))
+      false: filter<A>(cond, lm.tail)
+    }
+  }
+
+// Applies a function to all Values
+map<A: Type>(fn: A -> A, lm: ListMap<A>): ListMap<A>
+  case lm {
+    empty: ListMap.empty<A>
+    cons: ListMap.cons<A>({lm.head@fst, fn(lm.head@snd)}, map<A>(fn, lm.tail))
+  }
+
+// Runs x gets and y sets
+stress_test(sets: Nat, gets: Nat): String
+  let map = ListMap.empty!
+  for i from 0 to sets with map:
+    set<Nat>(i, 50, map)
+  let text = "test"
+  for i from 0 to gets with text:
+    let get = get<Nat>(i, map)
+    text
+  text
+
+ex_11: IO<Unit>
+  IO {
+    Tests._11.set(set)
+    Tests._11.get(get)
+    Tests._11.mut(mut)
+    Tests._11.has(has)
+    Tests._11.filter(filter)
+    Tests._11.map(map)
+  }
