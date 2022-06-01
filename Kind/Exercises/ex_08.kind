@@ -49,3 +49,17 @@ reverse<A: Type>(xs: List<A>): List<A>
 
 reverse.go<A: Type>(new_list: List<A>, old_list: List<A>): List<A>
   ?r
+
+ex_08: IO<Unit>
+  IO {
+    Tests._08.head(head)
+    Tests._08.tail(tail)
+    Tests._08.length(length)
+    Tests._08.last(last)
+    Tests._08.init(init)
+    Tests._08.concat(concat)
+    Tests._08.drop(drop)
+    Tests._08.take(take)
+    Tests._08.map(map)
+    Tests._08.reverse(reverse)
+  }
