@@ -62,7 +62,7 @@ challenge.go(count: Nat, strat: Strategy, max_races: Nat, all_correct: Bool): Pa
     succ:
       let seed        = count
       let horses      = create_horses(25, seed)
-      log("Horses for the race " | Nat.show(100 - count) | ":")
+      log("Horses for the group " | Nat.show(100 - count) | ":")
       log(List.show!(Nat.show, horses))
       let races_count = run_races(0, strat, horses)
       without races_count: {max_races, false}
