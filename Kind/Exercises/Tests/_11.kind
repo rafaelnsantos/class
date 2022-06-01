@@ -1,0 +1,79 @@
+lm: ListMap<Nat>
+  ListMap.empty<Nat>
+
+lm1: ListMap<Nat>
+  ListMap.cons<Nat>({1, 1}, ListMap.empty<Nat>)
+
+lm2: ListMap<Nat>
+  ListMap.cons<Nat>({1, 2}, ListMap.empty<Nat>)
+
+TestMap: ListMap<Nat>
+  ListMap.cons<Nat>(({0, 5})
+  ListMap.cons<Nat>(({1, 6})
+  ListMap.cons<Nat>(({2, 7})
+  ListMap.cons<Nat>(({3, 8})
+  ListMap.cons<Nat>(({4, 9})
+  ListMap.cons<Nat>(({5, 10})
+  ListMap.empty<Nat>))))))
+
+TestMapSucc: ListMap<Nat>
+  ListMap.cons<Nat>(({0, 6})
+  ListMap.cons<Nat>(({1, 7})
+  ListMap.cons<Nat>(({2, 8})
+  ListMap.cons<Nat>(({3, 9})
+  ListMap.cons<Nat>(({4, 10})
+  ListMap.cons<Nat>(({5, 11})
+  ListMap.empty<Nat>))))))
+
+TestMapEven: ListMap<Nat>
+  ListMap.cons<Nat>(({1, 6})
+  ListMap.cons<Nat>(({3, 8})
+  ListMap.cons<Nat>(({5, 10})
+  ListMap.empty<Nat>)))
+
+
+TestMapOdd: ListMap<Nat>
+  ListMap.cons<Nat>(({0, 5})
+  ListMap.cons<Nat>(({2, 7})
+  ListMap.cons<Nat>(({4, 9})
+  ListMap.empty<Nat>)))
+
+
+Tests._11.set(set: <A: Type> -> Nat -> A -> ListMap<A> -> ListMap<A>): IO<Unit>
+  IO {
+    Assert.listmap<Nat>(Assert.nat.funcs, "set 1 1 empty", set<Nat>(1, 1, lm), lm1)
+    IO.print("set: All terms tested")
+  }
+
+
+Tests._11.get(get: <A: Type> -> Nat -> ListMap<A> -> Maybe<A>): IO<Unit>
+  IO {
+    Assert.maybe<Nat>(Assert.nat.funcs, "get 1 1 TestMap", get<Nat>(1, TestMap), Maybe.some<Nat>(6))
+    IO.print("get: All terms tested")
+  }
+
+Tests._11.mut(mut: <A: Type> -> Nat -> (A -> A) -> ListMap<A> -> ListMap<A>): IO<Unit>
+  IO {
+    Assert.listmap<Nat>(Assert.nat.funcs, "mut 1 Nat.succ TestMap", mut<Nat>(1, Nat.succ, lm1), lm2)
+    IO.print("mut: All terms tested")
+  }
+
+Tests._11.has(has: <A: Type> -> Nat -> ListMap<A> -> Bool): IO<Unit>
+  IO {
+    Assert.bool("has 1 TestMap", has<Nat>(1, TestMap), true)
+    Assert.bool("has 100 TestMap", has<Nat>(100, TestMap), false)
+    IO.print("has: All terms tested")
+  }
+
+Tests._11.filter(filter: <A: Type> -> (A -> Bool) -> ListMap<A> -> ListMap<A>): IO<Unit>
+  IO {
+    Assert.listmap<Nat>(Assert.nat.funcs, "filter Nat.odd TestMap", filter<Nat>(Nat.odd, TestMap), TestMapOdd)
+    Assert.listmap<Nat>(Assert.nat.funcs, "filter Nat.is_even TestMap", filter<Nat>(Nat.is_even, TestMap), TestMapEven)
+    IO.print("filter: All terms tested")
+  }
+
+Tests._11.map(map: <A: Type> -> (A -> A) -> ListMap<A> -> ListMap<A>): IO<Unit>
+  IO {
+    Assert.listmap<Nat>(Assert.nat.funcs, "map Nat.succ TestMap", map<Nat>(Nat.succ, TestMap), TestMapSucc)
+    IO.print("map: All terms tested")
+  }

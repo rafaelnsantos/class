@@ -1,5 +1,8 @@
+Assert.nat.funcs: Assert.func<Nat> 
+  { Nat.eql, Nat.show }
+
 Nat.funcs: Assert.func<Nat> 
   { Nat.eql, Nat.show }
 
 Assert.nat(name: String, result: Nat, expected: Nat): IO<Unit>
-  Assert<Nat>(Nat.funcs, expected, result, name) 
+  Assert<Nat>(Assert.nat.funcs, expected, result, name) 
