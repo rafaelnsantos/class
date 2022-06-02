@@ -6,14 +6,17 @@ type ListMap <A: Type> {
 }
 
 // Inserts a value
+// If the key is already present, its value is updated
 set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
   ?set
 
-// Returns a Value from a Key (if there is one)
+// Returns a Value from a Key
+// If the key is not present, returns None
 get<A: Type>(key: Nat, lm: ListMap<A>): Maybe<A>
   ?get
 
 // Applies a function to a Value from a Key
+// Returns the same ListMap if the key is not present 
 mut<A: Type>(key: Nat, fn: A -> A, lm: ListMap<A>): ListMap<A>
   ?mut
 
@@ -22,6 +25,7 @@ show<A: Type>(fn: A -> String, lm: ListMap<A>): String
   ?show
 
 // Checks if the ListMap has a key
+// Returns true if the key is present, false otherwise
 has<A:Type>(key: Nat, lm: ListMap<A>): Bool
   ?has
 
