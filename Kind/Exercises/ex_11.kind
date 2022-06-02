@@ -49,6 +49,12 @@ stress_test(sets: Nat, gets: Nat): String
     text
   text
 
-ex_11: _
-  // stress_test(10000, 10000)
-  "test"
+ex_11: IO<Unit>
+  IO {
+    Tests._11.set(set)
+    Tests._11.get(get)
+    Tests._11.mut(mut)
+    Tests._11.has(has)
+    Tests._11.filter(filter)
+    Tests._11.map(map)
+  } 
