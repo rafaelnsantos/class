@@ -7,6 +7,7 @@ type ListMap <A: Type> {
 
 // Inserts a value
 // If the key is already present, its value is updated
+// If the key is not present, the value is added to the map
 set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
   ?set
 
