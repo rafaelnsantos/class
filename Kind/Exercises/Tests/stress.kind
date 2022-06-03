@@ -1,0 +1,169 @@
+//-----------------------------------------------------------------------------
+// ListMap
+// Runs x gets and y sets
+
+type ListMap<A: Type> { 
+  empty
+  cons(head: Pair<Nat, A>, tail: ListMap<A>)
+}
+
+
+Tests.stress.lmap(sets: Nat, gets: Nat): IO<Unit>
+  let sets_timer = List.nil<Nat>
+  let gets_timer = List.nil<Nat>
+  let map        = ListMap.empty<Nat>
+  stress.lmap.go(sets, sets, gets, gets, sets_timer, gets_timer, Maybe.none<Nat>, map)
+
+stress.lmap.go(sets: Nat, total_sets: Nat, gets: Nat, total_gets: Nat, sets_timer: List<Nat>, gets_timer: List<Nat>, val: Maybe<Nat>, map: ListMap<Nat>): IO<Unit>
+  case sets { 
+    zero: case gets { 
+      zero:
+        let set_total_time = 
+          let last = Nat.to_f64(List.head<Nat>(sets_timer) <> 0)
+          let fst  = Nat.to_f64(List.last<Nat>(sets_timer) <> 0)
+          (F64.sub(last, fst) / 1000)
+
+        let get_total_time = 
+          let last = Nat.to_f64(List.head<Nat>(gets_timer) <> 0)
+          let fst  = Nat.to_f64(List.last<Nat>(gets_timer) <> 0)
+          (F64.sub(last, fst) / 1000)
+
+          IO { 
+            IO.print("Done a total of "| Nat.show(total_sets)| " sets and took average "| F64.show(set_total_time)| " seconds")
+            IO.print("Done a total of "| Nat.show(total_gets)| " gets and took average "| F64.show(get_total_time)| " seconds")
+          }
+      succ:
+        IO { 
+          let val        = Tests.stress.lmap.get<Nat>(gets, map)
+          let gets       = gets.pred
+          get timer      = IO.get_time
+          let gets_timer = List.cons<Nat>(timer, gets_timer)
+          stress.lmap.go(sets, total_sets, gets, total_gets, sets_timer, gets_timer, val, map)
+        }
+    }
+    succ:
+        IO { 
+          let map        = Tests.stress.lmap.set<Nat>(sets, 1,  map)
+          let sets       = sets.pred
+          get timer      = IO.get_time
+          let sets_timer = List.cons<Nat>(timer, sets_timer)
+          stress.lmap.go(sets, total_sets, gets, total_gets, sets_timer, gets_timer, val, map)
+        }
+  } 
+
+
+Tests.stress.lmap.get<A: Type>(key: Nat, lm: ListMap<A>): Maybe<A>
+  case lm { 
+    empty: Maybe.none<A>
+    cons:  
+      let map_key = lm.head@fst
+      let result  = lm.head@snd
+      case Nat.eql(key, map_key) { 
+        true:  Maybe.some<A>(result)
+        false: Tests.stress.lmap.get<A>(key, lm.tail)
+      }
+  }
+
+
+
+Tests.stress.lmap.set<A: Type>(key: Nat, value: A, lm: ListMap<A>): ListMap<A>
+  let new_pair = Pair.new<Nat, A>(key, value)
+  case lm { 
+    empty: ListMap.cons<A>(new_pair, lm)
+    cons:  
+      let map_key = lm.head@fst
+      case Nat.eql(key, map_key) {
+        true:  ListMap.cons<A>(new_pair, lm.tail)
+        false: ListMap.cons<A>(lm.head, Tests.stress.lmap.set<A>(key, value, lm.tail))
+      }
+  }
+
+//-----------------------------------------------------------------------------
+// BitsMap 
+
+//Do not edit below this line
+
+//This code does a stress test on the BitsMap Set and Get functions
+
+
+//If the timme doesn't feel right, the timer only considers the time it took to
+//set and get, there are other functions runing that doesn't increase to the
+//timer, but it might take a little bit longer to run
+
+Tests.stress.bmap(sets: Nat, gets: Nat): IO<Unit>
+  IO { 
+    get total_sets = stress.set_stress_test(sets)
+    let map        = BitsMap.new!
+    let gets       = stress.get_stress_test(gets, total_sets@fst)
+      gets
+      return total_sets@snd
+  }
+
+
+
+////Function that makes a n number of sets into a new BitsMap of the type Nat
+stress.set_stress_test(sets: Nat): IO<Pair<BitsMap<Nat>, Unit>>
+  let key  = Bits.e
+  let map  = BitsMap.new<Nat>
+  let list = List.nil<Nat>
+  stress.set_stress_test.go(sets, sets, key list, map)
+
+
+
+
+//// Function that makes a n number of gets on a BitsMap of Nat
+stress.get_stress_test(gets: Nat, map: BitsMap<Nat>): IO<Unit>
+  let key  = Bits.e
+  let val  = Maybe.none<Nat>
+  let list = List.nil<Nat>
+  stress.get_stress_test.go(gets, gets, key, map, val, list)
+
+
+
+
+////Auxiliar function
+stress.set_stress_test.go(sets: Nat, total_sets: Nat, key: Bits, time: List<Nat>,  map: BitsMap<Nat>): IO<Pair<BitsMap<Nat>, Unit>>
+  case sets { 
+    zero: 
+      let total_time = 
+        let last = Nat.to_f64(List.head<Nat>(time) <> 0)
+        let fst  = Nat.to_f64(List.last<Nat>(time) <> 0)
+        (F64.sub(last, fst) / 1000)
+      IO { 
+        get print = IO.print("Done a total of "| Nat.show(total_sets)| " sets and took average "| F64.show(total_time)| " seconds")
+        return Pair.new<BitsMap<Nat>, Unit>(map, print)
+      }
+    succ:
+      IO {
+        let sets  = sets.pred
+        let key   = Bits.inc(key)
+        let map   = BitsMap.set<Nat>(key, 1, map)
+        get timer = IO.get_time
+        let time  = List.cons<Nat>(timer, time)
+        stress.set_stress_test.go(sets, total_sets, key, time,  map)
+      }
+  }
+
+
+
+//Auxiliar function
+stress.get_stress_test.go(gets: Nat, total_gets: Nat, key: Bits, map: BitsMap<Nat>, val: Maybe<Nat>, time: List<Nat>): IO<Unit>
+  case gets { 
+    zero: 
+      let total_time = 
+        let last = Nat.to_f64(List.head<Nat>(time) <> 0)
+        let fst  = Nat.to_f64(List.last<Nat>(time) <> 0)
+        (F64.sub(last, fst) / 1000)
+        IO.print("Done a total of "| Nat.show(total_gets)| " gets and took average "| F64.show(total_time)| " seconds")
+    succ: 
+      IO { 
+        let gets  = gets.pred
+        let key   = Bits.inc(key)
+        let val   = BitsMap.get<Nat>(key, map)
+        get timer = IO.get_time
+        let time  = List.cons<Nat>(timer, time)
+        stress.get_stress_test.go(gets, total_gets, key, map, val, time)
+      }
+  }
+
+//-----------------------------------------------------------------------------

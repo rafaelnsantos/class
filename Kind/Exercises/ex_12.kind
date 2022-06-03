@@ -7,7 +7,7 @@ type BitsMap<A: Type> {
 // that key already belongs to another value, it should be replaced with the new
 // one
 
-set<A: Type>(key: Bits, val: A, map: BitsMap<A>): Maybe<A>
+set<A: Type>(key: Bits, val: A, map: BitsMap<A>): BitsMap<A>
   ?set
 
 
@@ -77,3 +77,12 @@ key<A: Type>(map: BitsMap<A>): List<Bits>
 
 union<A: Type>(a: BitsMap<A>, b: BitsMap<A>): BitsMap<A>
   ?union
+
+
+//Stress Test for BitsMap
+
+stress_test(sets: Nat, gets: Nat): IO<Unit>
+  Tests.stress.bmap(sets, gets)
+
+ex_12: IO<Unit>
+  stress_test(500000,500000)
