@@ -84,5 +84,5 @@ union<A: Type>(a: BitsMap<A>, b: BitsMap<A>): BitsMap<A>
 stress_test(sets: Nat, gets: Nat): IO<Unit>
   Tests.stress.bmap(sets, gets)
 
-ex_12: IO<Unit>
-  stress_test(500000,500000)
+//ex_12:_
+  //stress_test(4000000, 100)
