@@ -35,7 +35,7 @@ filter<A: Type>(cond: A -> Bool, lm: ListMap<A>): ListMap<A>
   ?filter
 
 // Applies a function to all Values
-map<A: Type>(fn: A -> A, lm: ListMap<A>): ListMap<A>
+map<A: Type, B: Type>(fn: A -> B, lm: ListMap<A>): ListMap<B>
   ?map
 
 // Runs x gets and y sets

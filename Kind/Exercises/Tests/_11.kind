@@ -83,8 +83,8 @@ Tests._11.filter(filter: <A: Type> -> (A -> Bool) -> ListMap<A> -> ListMap<A>): 
     IO.print("filter: All terms tested")
   }
 
-Tests._11.map(map: <A: Type> -> (A -> A) -> ListMap<A> -> ListMap<A>): IO<Unit>
+Tests._11.map(map: <A: Type> -> <B: Type> -> (A -> B) -> ListMap<A> -> ListMap<B>): IO<Unit>
   IO {
-    Assert.listmap<Nat>(Assert.nat.funcs, "map Nat.succ TestMap", map<Nat>(Nat.succ, TestMap), TestMapSucc)
+    Assert.listmap<Nat>(Assert.nat.funcs, "map Nat.succ TestMap", map<Nat, Nat>(Nat.succ, TestMap), TestMapSucc)
     IO.print("map: All terms tested")
   }
