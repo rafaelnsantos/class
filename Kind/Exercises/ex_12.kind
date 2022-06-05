@@ -33,7 +33,7 @@ mut<A: Type>(key: Bits, fn: A -> A, map: BitsMap<A>): BitsMap<A>
 //Receives:
   // key of the type Bits
   // map of the type BitsMap<A>
-  // returns a Maybe<A>
+  // returns a BitsMap<A>
 
 //del<A: Type>(...)
 
@@ -84,5 +84,5 @@ union<A: Type>(a: BitsMap<A>, b: BitsMap<A>): BitsMap<A>
 stress_test(sets: Nat, gets: Nat): IO<Unit>
   Tests.stress.bmap(sets, gets)
 
-//ex_12:_
-  //stress_test(4000000, 100)
+ex_12:_
+  stress_test(1000000, 1000000)
